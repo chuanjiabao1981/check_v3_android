@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="custom_circle_prg_bar_pri_color_light">#f032b3e1</color>
+    <color name="custom_circle_prg_bar_sec_color_light">#50c0eaf8</color>
+    <color name="color_white">#ffffffff</color>
+    <color name="color_opacity">#ccffffff</color>
+    <color name="color_black">#ff000000</color>
+    <color name="dim_foreground_dark">#ffbebebe</color>
+    <color name="grey">#ffdddddd</color>
+    <color name="dark_grey">#ffc1c1c1</color>
+    <color name="holo_blue_dark">#ff0099cc</color>
+    <color name="accent_blue">#ff0072c6</color>
+    <color name="dark_blue">#ff4668c5</color>
+    <color name="holo_blue_light">#ff33b5e5</color>
+</resources>

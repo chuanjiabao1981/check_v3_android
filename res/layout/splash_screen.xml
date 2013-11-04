@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/splash_bg"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/yunjian_splash_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:src="@drawable/yunjian_logo" />
+
+    <TextView
+        android:id="@+id/tv_splash_screen"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/yunjian_splash_logo"
+        android:background="@null"
+        android:gravity="center_horizontal"
+        android:text="欢迎使用云检3"
+        android:textColor="@color/color_white"
+        android:textSize="20.0sp" />
+
+    <TextView
+        android:id="@+id/tv_splash_copyright"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="17.0dip"
+        android:background="@null"
+        android:gravity="center_horizontal"
+        android:text="Copyright@ 2013 XXX Tech. All Right Reserved"
+        android:textColor="@color/color_white"
+        android:textSize="13.0sp" />
+
+</RelativeLayout>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">云检3</string>
+    <string name="dialog_title">dialog_title</string>
+    <string name="dialog_message">dialog_message</string>
+</resources>

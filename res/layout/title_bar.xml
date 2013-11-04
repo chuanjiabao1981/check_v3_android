@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="48.0dip"
+    android:background="@drawable/login_bg"
+    android:orientation="horizontal" >
+
+    <Button
+        android:id="@+id/btn_title_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="7.0px"
+        android:layout_marginRight="35.0dip"
+        android:background="@drawable/top_left_button"
+        android:gravity="center_vertical"
+        android:lines="1"
+        android:text="返回"
+        android:textColor="@color/color_white"
+        android:textSize="12.0sp" />
+
+    <TextView
+        android:id="@+id/tv_top_title"
+        android:layout_width="127.0dip"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center_horizontal"
+        android:lines="1"
+        android:text="Toptitle"
+        android:textColor="@color/color_white"
+        android:textSize="19.0sp" />
+
+    <Button
+        android:id="@+id/btn_title_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32.0dip"
+        android:background="@drawable/top_right_button"
+        android:gravity="center_vertical"
+        android:lines="1"
+        android:text="RIGHT"
+        android:textColor="@color/color_white"
+        android:textSize="12.0sp" />
+
+</LinearLayout>
