@@ -3,16 +3,12 @@ package com.check.v3.login;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -259,9 +255,9 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 	public void launchLogin() {
 		if (validate()) {
 			saveLoginInfo();
-			LoginForm loginForm = new LoginForm(this);
-			LoginTask loginTask = new LoginTask(loginForm);
-			loginTask.go();
+			LoginTask loginTask = new LoginTask(this, userNameEditText.getText().toString().trim(),
+					passwordEditText.getText().toString().trim());
+			loginTask.doLogin();
 		}
 	}
 

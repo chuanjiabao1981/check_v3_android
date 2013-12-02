@@ -3,4 +3,21 @@
     <string name="app_name">云检3</string>
     <string name="dialog_title">dialog_title</string>
     <string name="dialog_message">dialog_message</string>
+    
+    <string name="generic_server_down">Generic server down</string>
+    <string name="no_internet">No wireless network connection</string>
+    <string name="generic_error">Generic error</string>
+    
+    <string-array name="orig_array">
+        <item>政务处</item>
+        <item>后勤处</item>
+        <item>总务处</item>
+        <item>办公室</item>
+    </string-array>
+    
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="action_websearch">Web search</string>
+    <string name="app_not_available">Sorry, there\'s no web browser available</string>
+    <string name="spinner_prompt">Choose Orig</string>
 </resources>

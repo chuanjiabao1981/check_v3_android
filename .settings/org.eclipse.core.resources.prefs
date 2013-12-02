@@ -1,3 +1,8 @@
 eclipse.preferences.version=1
 encoding//src/com/check/v3/api/FormRequest.java=UTF-8
+encoding//src/com/check/v3/mainui/AttachmentSimpleAdapter.java=UTF-8
+encoding//src/com/check/v3/mainui/MainActivity.java=UTF-8
+encoding//src/com/check/v3/mainui/QuickCheckComposeActivity.java=UTF-8
+encoding//src/com/check/v3/mainui/QuickCheckListFragment.java=UTF-8
+encoding//src/com/check/v3/util/FileHelper.java=UTF-8
 encoding/<project>=UTF-8
