@@ -2,15 +2,19 @@ package com.check.v3;
 
 import java.util.ArrayList;
 
+import org.apache.http.Header;
 import org.apache.http.client.CookieStore;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.check.v3.asynchttp.AsyncHttpClient;
 import com.check.v3.asynchttp.AsyncHttpResponseHandler;
 import com.check.v3.asynchttp.RequestParams;
 import com.check.v3.asynchttp.PersistentCookieStore;
 import com.check.v3.data.QuickCheckReqFilePartData;
+import com.check.v3.data.Session;
+import com.check.v3.preferences.PrefConstant;
 
 public class CloudCheckAsyncClient {
 	private static final String BASE_URL = "http://www.365check.net:8088/check-service/api/v1/";

@@ -3,25 +3,29 @@ package com.check.v3;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
 
+import org.apache.http.HttpVersion;
 import org.apache.http.client.CookieStore;
+import org.apache.http.conn.params.ConnManagerParams;
+import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpProtocolParams;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpClientStack;
 import com.android.volley.toolbox.Volley;
+import com.check.v3.asynchttp.MySSLSocketFactory;
 import com.check.v3.data.IssueLevel;
 import com.check.v3.data.Organization;
 import com.check.v3.data.SimpleOrganization;
@@ -188,6 +192,36 @@ public class CloudCheckApplication extends Application {
 		return sInstance;
 	}
 
+    private static SchemeRegistry getDefaultSchemeRegistry(boolean fixNoHttpResponseException, int httpPort, int httpsPort) {
+        if (fixNoHttpResponseException) {
+            Log.d("", "Beware! Using the fix is insecure, as it doesn't verify SSL certificates.");
+        }
+
+        if (httpPort < 1) {
+            httpPort = 80;
+            Log.d("", "Invalid HTTP port number specified, defaulting to 80");
+        }
+
+        if (httpsPort < 1) {
+            httpsPort = 443;
+            Log.d("", "Invalid HTTPS port number specified, defaulting to 443");
+        }
+
+        // Fix to SSL flaw in API < ICS
+        // See https://code.google.com/p/android/issues/detail?id=13117
+        SSLSocketFactory sslSocketFactory;
+//        if (fixNoHttpResponseException)
+//            sslSocketFactory = MySSLSocketFactory.getFixedSocketFactory();
+//        else
+            sslSocketFactory = SSLSocketFactory.getSocketFactory();
+
+        SchemeRegistry schemeRegistry = new SchemeRegistry();
+        schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), httpPort));
+        schemeRegistry.register(new Scheme("https", sslSocketFactory, httpsPort));
+
+        return schemeRegistry;
+    }
+	
 	/**
 	 * @return The Volley Request queue, the queue will be created if it is null
 	 */
@@ -197,22 +231,25 @@ public class CloudCheckApplication extends Application {
 		if (mRequestQueue == null) {
 			
 			
-			BasicHttpParams httpParameters = new BasicHttpParams(); 
+	        BasicHttpParams httpParams = new BasicHttpParams();
 
-            HttpConnectionParams.setConnectionTimeout(httpParameters,  
-                    60000); 
-            HttpConnectionParams.setSoTimeout(httpParameters, 60000);  
-            SchemeRegistry schreg = new SchemeRegistry();  
-            schreg.register(new Scheme("http", PlainSocketFactory  
-                    .getSocketFactory(), 80));  
-            schreg.register(new Scheme("https", PlainSocketFactory  
-                    .getSocketFactory(), 443));  
-            ThreadSafeClientConnManager connManager = new ThreadSafeClientConnManager(  
-                    httpParameters, schreg);
+	        ConnManagerParams.setTimeout(httpParams, 30000);
+	        ConnManagerParams.setMaxConnectionsPerRoute(httpParams, new ConnPerRouteBean(10));
+	        ConnManagerParams.setMaxTotalConnections(httpParams, 10);
+
+	        HttpConnectionParams.setSoTimeout(httpParams, 30000);
+	        HttpConnectionParams.setConnectionTimeout(httpParams, 30000);
+	        HttpConnectionParams.setTcpNoDelay(httpParams, true);
+	        HttpConnectionParams.setSocketBufferSize(httpParams, 8192);
+
+	        HttpProtocolParams.setVersion(httpParams, HttpVersion.HTTP_1_1);
+	        HttpProtocolParams.setUserAgent(httpParams, String.format("android-async-http/%s (http://loopj.com/android-async-http)", "1.4.5"));
+
+	        ThreadSafeClientConnManager cm = new ThreadSafeClientConnManager(httpParams, getDefaultSchemeRegistry(false, 80, 443));
 		      		
-			
-			
-			mHttpClient = new DefaultHttpClient();
+						
+			mHttpClient = new DefaultHttpClient(cm, httpParams);
+			setCookie();
 			mRequestQueue = Volley.newRequestQueue(getApplicationContext(), new HttpClientStack(mHttpClient));
 		}
 

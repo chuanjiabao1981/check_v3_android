@@ -175,7 +175,10 @@ public class LoginTask{
 
             @Override
             public void onFailure(int statusCode, Header[] headers,	byte[] errorResponse, Throwable e) {
-
+            	mProgressStatusView.dismiss();
+            	
+//            	String rspStr = new String(errorResponse);
+				Log.d(TAG, "error response : " + e.toString());
             }
         };
         CloudCheckApplication.mAsyncHttpClientApi.post("sessions/create", mLoginJsonData.toString(), responseHandler);
