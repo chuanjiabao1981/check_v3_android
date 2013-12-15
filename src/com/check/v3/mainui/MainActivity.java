@@ -28,7 +28,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.sherlock.navigationdrawer.compat.SherlockActionBarDrawerToggle;
 import com.check.client.R;
-import com.check.v3.ApplicationController.OrgMngr;
+import com.check.v3.CloudCheckApplication.AccountMngr;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -47,8 +47,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 /**
  * This example illustrates a common usage of the DrawerLayout widget
@@ -87,6 +87,8 @@ public class MainActivity extends SherlockFragmentActivity {
     private SherlockActionBarDrawerToggle mDrawerToggle;
     
     private Spinner mDrawerOrgSpinner;
+    private ArrayList<String> mOrgList;
+    private ArrayAdapter<String> orgAdapter;
 
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
@@ -171,12 +173,17 @@ public class MainActivity extends SherlockFragmentActivity {
 //		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
 //				this, R.array.orig_array, android.R.layout.simple_spinner_item);
 		
-		ArrayList<String> mOrgList = OrgMngr.getOrgList();
-    	ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, mOrgList);
+		mOrgList = AccountMngr.getOrgNameList();
+    	orgAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, mOrgList);
     	
 		
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		mDrawerOrgSpinner.setAdapter(adapter);
+		orgAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		mDrawerOrgSpinner.setAdapter(orgAdapter);
+		mDrawerOrgSpinner.setOnItemSelectedListener(mDrawerOrgSpinnSelectedListener);
+		mDrawerOrgSpinner.setSelection(0);
+		
+		int selectedOrgId = AccountMngr.getOrgIdByName(mOrgList.get(0));
+		 AccountMngr.setGlobalOrgId(selectedOrgId);
 		
 		mDrawerList.setAdapter(separatedAdapter);
 		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
@@ -210,6 +217,27 @@ public class MainActivity extends SherlockFragmentActivity {
             selectItem(2);
         }
     }
+    
+	private OnItemSelectedListener mDrawerOrgSpinnSelectedListener = new OnItemSelectedListener() {
+
+		@Override
+		public void onItemSelected(AdapterView<?> parent, View view, int pos,
+				long id) {
+			 
+			 String selectedOrgName = mOrgList.get(pos);
+			 int selectedOrgId = AccountMngr.getOrgIdByName(selectedOrgName);
+			 AccountMngr.setGlobalOrgId(selectedOrgId);
+			 
+		}
+
+		@Override
+		public void onNothingSelected(AdapterView<?> arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	};
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

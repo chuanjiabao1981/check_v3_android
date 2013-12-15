@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/quick_check_viewer_fragment_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dip"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/qc_v_issue_dscp_container"
+                style="@style/custom_qc_viewer_item_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+				android:orientation="horizontal" 
+                android:padding="5dip" >
+
+                <TextView
+                    android:id="@+id/qc_v_issue_dscp_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="问题描述:"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#000000" 
+                    android:layout_gravity="center_vertical"/>
+
+                <TextView
+                    android:id="@+id/qc_v_issue_dscp_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#000000" 
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="5dip" />
+            </LinearLayout>
+            
+            <LinearLayout
+                android:id="@+id/qc_v_issue_state_container"
+                style="@style/custom_qc_viewer_item_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+				android:orientation="horizontal" 
+                android:padding="5dip" >
+
+                <TextView
+                    android:id="@+id/qc_v_issue_state_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="问题状态:"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#000000" 
+                    android:layout_gravity="center_vertical"/>
+
+                <TextView
+                    android:id="@+id/qc_v_issue_state_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#000000" 
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="5dip" />
+            </LinearLayout>
+             
+            <LinearLayout
+                android:id="@+id/qc_v_issue_level_container"
+                style="@style/custom_qc_viewer_item_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+				android:orientation="horizontal" 
+                android:padding="5dip" >
+
+                <TextView
+                    android:id="@+id/qc_v_issue_level_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="严重程度:"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#000000" 
+                    android:layout_gravity="center_vertical"/>
+
+                <TextView
+                    android:id="@+id/qc_v_issue_level_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#000000" 
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="5dip" />
+            </LinearLayout>   
+            
+            <LinearLayout
+                android:id="@+id/qc_v_issue_submitter_container"
+                style="@style/custom_qc_viewer_item_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+				android:orientation="horizontal" 
+                android:padding="5dip" >
+
+                <TextView
+                    android:id="@+id/qc_v_issue_submitter_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="提  交  者:"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#000000" 
+                    android:layout_gravity="center_vertical"/>
+
+                <TextView
+                    android:id="@+id/qc_v_issue_submitter_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#000000" 
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="5dip" />
+            </LinearLayout>        
+            
+            <LinearLayout
+                android:id="@+id/qc_v_issue_deadline_container"
+                style="@style/custom_qc_viewer_item_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+				android:orientation="horizontal" 
+                android:padding="5dip" >
+
+                <TextView
+                    android:id="@+id/qc_v_issue_deadline_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="解决期限:"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#000000" 
+                    android:layout_gravity="center_vertical"/>
+
+                <TextView
+                    android:id="@+id/qc_v_issue_deadline_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#000000" 
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="5dip" />
+            </LinearLayout>      
+            
+            <LinearLayout
+                android:id="@+id/qc_v_issue_rsp_org_container"
+                style="@style/custom_qc_viewer_item_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+				android:orientation="horizontal" 
+                android:padding="5dip" >
+
+                <TextView
+                    android:id="@+id/qc_v_issue_rsp_org_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="责任机构:"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#000000" 
+                    android:layout_gravity="center_vertical"/>
+
+                <TextView
+                    android:id="@+id/qc_v_issue_rsp_org_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#000000" 
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="5dip" />
+            </LinearLayout>    
+            
+            <LinearLayout
+                android:id="@+id/qc_v_issue_rsp_person_container"
+                style="@style/custom_qc_viewer_item_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+				android:orientation="horizontal" 
+                android:padding="5dip" >
+
+                <TextView
+                    android:id="@+id/qc_v_issue_rsp_person_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="责  任  人:"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#000000" 
+                    android:layout_gravity="center_vertical"/>
+
+                <TextView
+                    android:id="@+id/qc_v_issue_rsp_person_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#000000" 
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="5dip" />
+            </LinearLayout>
+            
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>

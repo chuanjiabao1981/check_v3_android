@@ -2,6 +2,7 @@ package com.check.v3.login;
 
 import java.util.ArrayList;
 
+import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -11,17 +12,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.android.volley.Request.Method;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.check.v3.ApplicationController;
+import com.android.volley.toolbox.Volley;
+import com.check.v3.CloudCheckApplication;
+import com.check.v3.CloudCheckAsyncClient;
 import com.check.v3.VolleyErrorHelper;
+import com.check.v3.asynchttp.AsyncHttpResponseHandler;
 import com.check.v3.data.Organization;
 import com.check.v3.data.OrganizationsByAccount;
-import com.check.v3.ApplicationController.OrgMngr;
+import com.check.v3.CloudCheckApplication.AccountMngr;
 import com.check.v3.data.ResponseData;
 import com.check.v3.data.Session;
 import com.check.v3.mainui.MainActivity;
@@ -43,7 +48,6 @@ public class LoginTask{
 	private Dialog mProgressStatusView = null;
 
 	private final String API3 = "/v3/api/v1/sessions/create";
-	
 
 	public LoginTask(final Activity context, String name, String password)
 	{
@@ -51,7 +55,8 @@ public class LoginTask{
 	    
 	    gson = new Gson();
 	    
-	    mQueue = ApplicationController.getInstance().getRequestQueue();
+	    mQueue = CloudCheckApplication.getInstance().getRequestQueue();	    
+	    
 	    mDataPreferences = new DataPreference(context.getApplicationContext());
 	    
 	    mProgressStatusView = DialogUtil.createLoadingDialog(mActivity, "正在登录...", android.R.style.Theme_NoTitleBar);
@@ -88,9 +93,10 @@ public class LoginTask{
 						String errorStr = VolleyErrorHelper.getMessage(
 								mActivity.getApplicationContext(), errInfo);
 						Log.d(TAG, "error response : " + errorStr);
-						ResponseData rspData = gson.fromJson(errorStr,
-								ResponseData.class);
-						Log.i(TAG, "error response : " + rspData.toString());
+						Toast.makeText(mActivity, errorStr, Toast.LENGTH_SHORT).show();
+//						ResponseData rspData = gson.fromJson(errorStr,
+//								ResponseData.class);
+//						Log.i(TAG, "error response : " + rspData.toString());
 						
 						mProgressStatusView.dismiss();
 					}
@@ -111,18 +117,8 @@ public class LoginTask{
                 		}
                 	}
                 
-                	OrgMngr.initOrgList(deptArrayList);
-                	
-//                	ArrayList<String> mOrgList = OrgMngr.getOrgList();
-//                	ArrayAdapter<String> adapter = new ArrayAdapter<String>(mActivity, android.R.layout.simple_spinner_item, mOrgList);
-//                	
-//                	adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);                	
-//                	
-//                	ArrayList<String> mPersonList = OrgMngr.getPersonByOrgList(373);
-//                	ArrayAdapter<String> adapterPerson = new ArrayAdapter<String>(mActivity, android.R.layout.simple_spinner_item, mPersonList);
-//                	
-//                	adapterPerson.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                	
+                	AccountMngr.initOrgList(deptArrayList);
+              	
                 	Intent intent = new Intent(mActivity, MainActivity.class);
 					mActivity.startActivity(intent);					      
 					
@@ -135,22 +131,93 @@ public class LoginTask{
 			public void onErrorResponse(VolleyError errInfo) {
 				String errorStr = VolleyErrorHelper.getMessage(mActivity.getApplicationContext(), errInfo);
 				Log.d(TAG, "error response : " + errorStr);
-////				ResponseData rspData = gson.fromJson(errorStr, ResponseData.class);
-////				Log.i(TAG, "error response : " + rspData.toString());
 				mProgressStatusView.dismiss();
 			}
 		});
 	}
 	
+	
 
+	
+//	public void doLogin() {
+//		mProgressStatusView.show();
+//		mQueue.add(mLoginJasonObjReq);
+//	}
+//	
+//	public void doGetOrgInfo() {
+//		mQueue.add(mGetOrgInfoJasonObjReq);
+//	}
 	
 	public void doLogin() {
 		mProgressStatusView.show();
-		ApplicationController.getInstance().addToRequestQueue(mLoginJasonObjReq);
+
+		AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
+
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+            	String rspStr = new String(response);
+				Log.d(TAG, "response : " + rspStr.toString());
+				
+				Session sessionId = gson.fromJson(rspStr,
+						Session.class);
+				Log.i(TAG, "server response : " + sessionId.toString());
+
+				mDataPreferences.saveData(PrefConstant.SESSION_ID,
+						sessionId.getJsession_id());
+				
+				doGetOrgInfo();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers,	byte[] errorResponse, Throwable e) {
+
+            }
+        };
+        CloudCheckApplication.mAsyncHttpClientApi.post("sessions/create", mLoginJsonData.toString(), responseHandler);
 	}
 	
 	public void doGetOrgInfo() {
-		ApplicationController.getInstance().addToRequestQueue(mGetOrgInfoJasonObjReq);
-	}
+		AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
+
+            @Override
+            public void onStart() {
+
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+            	String rspStr = new String(response);
+                Log.d(TAG, "response : " + rspStr.toString());
+                
+                OrganizationsByAccount deptArrayList1 = gson.fromJson(rspStr, OrganizationsByAccount.class);                
+                	ArrayList<Organization> deptArrayList = deptArrayList1.getOrganizations();
+                	for(int i = 0; i < deptArrayList.size(); i++){
+                		Log.d("Test", "dep id = " + deptArrayList.get(i).getId() + " , dep name = " + deptArrayList.get(i).getName());
+                		for(int j = 0; j < deptArrayList.get(i).getUsers().size(); j++){
+                			Log.d("Test", "user id = " + deptArrayList.get(i).getUsers().get(j).getId() + " , user name = " + deptArrayList.get(i).getUsers().get(j).getName());
+                		}
+                	}
+                
+                	AccountMngr.initOrgList(deptArrayList);
+              	
+                	Intent intent = new Intent(mActivity, MainActivity.class);
+					mActivity.startActivity(intent);					      
+					
+                	mProgressStatusView.dismiss();
+                	mActivity.finish();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers,	byte[] errorResponse, Throwable e) {
+
+            }
+        };
+        CloudCheckApplication.mAsyncHttpClientApi.get("organizations", null, responseHandler);		
+	}	
 
 }

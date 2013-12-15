@@ -9,5 +9,6 @@
            <item name="myapp_listPreferredItemHeightSmall">?android:attr/listPreferredItemHeightSmall</item>
            <item name="myapp_textAppearanceListItemSmall">?android:attr/textAppearanceListItemSmall</item>
            <item name="myapp_activatedBackgroundIndicator">?android:attr/activatedBackgroundIndicator</item>
+           <item name="CloudCheck_listPreferredItemHeightSmall">32dip</item>
        </style>
 </resources>

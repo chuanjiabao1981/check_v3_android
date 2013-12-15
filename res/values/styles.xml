@@ -16,6 +16,16 @@
         <item name="myapp_listPreferredItemHeightSmall">48dip</item>
         <item name="myapp_textAppearanceListItemSmall">@style/MyappDrawerMenu</item>
         <item name="myapp_activatedBackgroundIndicator">@android:color/transparent</item>
+        
+        <item name="CloudCheck_listPreferredItemHeightSmall">32dip</item>
+    </style>
+    
+    <style name="custom_edittext_style" parent="@android:style/Widget.EditText">
+        <item name="android:background">@drawable/login_input</item>
+    </style>
+    
+    <style name="custom_qc_viewer_item_style" parent="@android:style/Widget">
+        <item name="android:background">@drawable/login_input</item>
     </style>
 
     <style name="MyappDrawerMenu">
