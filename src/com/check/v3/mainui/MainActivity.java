@@ -295,8 +295,8 @@ public class MainActivity extends SherlockFragmentActivity {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
     	
     	if(drawerListItemNames[position].equals(LIST_QUICK_REPORT_ITEM)){
-    		listFragment = new QuickCheckListFragment();
-    		transaction.replace(R.id.content_frame, listFragment);
+    		fragment = new QuickReportListFragment();
+    		transaction.replace(R.id.content_frame, fragment);
 //    		fragment = new RandomCheckComposeFragment();
 //    		fragment.setArguments(args);
 //    		transaction.replace(R.id.content_frame, fragment);

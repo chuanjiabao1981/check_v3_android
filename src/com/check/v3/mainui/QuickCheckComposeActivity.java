@@ -7,12 +7,15 @@ import com.check.v3.api.ApiConstant;
 import com.check.v3.data.QuickCheckListItemData;
 import com.check.v3.data.QuickCheckRspData;
 import com.check.v3.mainui.QuickCheckEditorFragment.QuickCheckEditorFragmentListener;
+import com.check.v3.mainui.QuickCheckViewerFragment.QuickCheckViewerFragmentListener;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 
 
-public class QuickCheckComposeActivity extends SherlockFragmentActivity implements QuickCheckEditorFragmentListener{
+public class QuickCheckComposeActivity extends SherlockFragmentActivity implements QuickCheckEditorFragmentListener,
+				QuickCheckViewerFragmentListener {
 	private static final String TAG = "QuickCheckComposeActivity";
 	private int mQuickCheckAction = ApiConstant.QUICK_CHECK_EDIT_NEW_ACTION;
 	
@@ -59,6 +62,7 @@ public class QuickCheckComposeActivity extends SherlockFragmentActivity implemen
 		data.setState(itemData.getState());
 		data.setLevel(itemData.getLevel());
 		data.setDescription(itemData.getDescription());
+		data.setImages(itemData.getImages());
     	return data;
     }
 
@@ -88,5 +92,23 @@ public class QuickCheckComposeActivity extends SherlockFragmentActivity implemen
 //		transaction.addToBackStack(null);
 
 		transaction.commit();		
+	}
+
+	@Override
+	public void OnQuickCheckEditMenuItemClicked(QuickCheckRspData qcRspData) {
+		QuickCheckEditorFragment newFragment = QuickCheckEditorFragment.newInstance(qcRspData);
+
+		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+		transaction.replace(R.id.quick_check_compose_activity_container, newFragment);
+//		transaction.addToBackStack(null);
+
+		transaction.commit();	
+	}
+
+	@Override
+	public void OnQuickCheckProcessMenuItemClicked() {
+		// TODO Auto-generated method stub
+		
 	}
 	}

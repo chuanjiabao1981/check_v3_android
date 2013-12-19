@@ -79,7 +79,7 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
     
     QuickCheckEditorFragmentListener mQuickCheckEditorFragmentListener;
     
-    private CustomGridView mOrgListView;
+    private CustomGridView mPhotoGridView;
     AttachmentSimpleAdapter mAttachmentsSimpleAdapter;
     
 	private static final int REQUEST_IMAGE_CAPTURE = 2;
@@ -120,12 +120,14 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
     ArrayList<HashMap<String, Object>> imageItemsList;
     ArrayList<File> fileListToAdd;
     ArrayList<Integer> fileListToDelete;
+    
+    QuickCheckRspData qcData;
 	
-    public static QuickCheckEditorFragment newInstance(Bundle data) {
+    public static QuickCheckEditorFragment newInstance(QuickCheckRspData reference) {
     	QuickCheckEditorFragment fragment = new QuickCheckEditorFragment();
 
         Bundle args = new Bundle();
-        args.putParcelable(ARG_REFERENCE, data);
+        args.putSerializable(ARG_REFERENCE, reference);
         fragment.setArguments(args);
 
         return fragment;
@@ -151,7 +153,7 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
 
 		deadLinedatePicker = (EditText) rootView.findViewById(R.id.issue_dealine_picker);
 		mIssueDescriptionEditText = (EditText) rootView.findViewById(R.id.issue_dscp_edit);
-		mOrgListView = (CustomGridView) rootView.findViewById(R.id.org_list);
+		mPhotoGridView = (CustomGridView) rootView.findViewById(R.id.issue_editor_photo_list);
 	
 		mIssueLevelSimpleAdapter = new IssueLevelSimpleAdapter(getActivity(), AccountMngr.getIssueLevelList());
 		mComposeIssueLevelSpinn.setAdapter(mIssueLevelSimpleAdapter);
@@ -168,6 +170,12 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
 		mComposeOrgSpinn.setSelection(0);
 		mComposeOrgSpinn.setOnItemSelectedListener(mOrgSpinnSelectedListener);		
 				
+		mPersonList = new ArrayList<User>();
+		User emptyUserItem = new User();
+		emptyUserItem.setId(-1);
+		emptyUserItem.setName("");
+		mPersonList.add(0, emptyUserItem);
+		mPersonSimpleAdapter = new PersonSimpleAdapter(getActivity(), mPersonList);
 		mComposeRspPersonSpinn.setAdapter(mPersonSimpleAdapter);
 		mComposeRspPersonSpinn.setOnItemSelectedListener(mIssueRspPersonSpinnSelectedListener);
 		
@@ -192,14 +200,92 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
 				imageItemsList);
 		mAttachmentsSimpleAdapter.setDeleteHandler(mAttachmentDeleteHandler);
 
-		mOrgListView.setAdapter(mAttachmentsSimpleAdapter);
-		mOrgListView.setOnItemClickListener(this);
+		mPhotoGridView.setAdapter(mAttachmentsSimpleAdapter);
+		mPhotoGridView.setOnItemClickListener(this);
 		
 		gson = new Gson();	    
 	    mQueue = CloudCheckApplication.getInstance().getRequestQueue();
-
+	    
 		return rootView;
 	}
+	
+	private void initViewData(){
+        Bundle args = getArguments();
+        if(args != null){
+        	qcData = (QuickCheckRspData) args.getSerializable(ARG_REFERENCE);
+        }
+        
+        if(qcData != null){
+        	mIssueDescriptionEditText.setText(qcData.getDescription());
+        	deadLinedatePicker.setText(qcData.getDeadline());
+        	
+        	String issueLevel = qcData.getLevel();
+        	ArrayList<IssueLevel> issueLevelList = AccountMngr.getIssueLevelList();
+        	for(int i = 0; i < issueLevelList.size(); i++){
+        		if(issueLevelList.get(i).getIssueLevelId().equals(issueLevel)){
+        			mComposeIssueLevelSpinn.setSelection(i);
+        			break;
+        		}
+        	}
+        	
+//        	mSimpleOrgList = AccountMngr.getSimpleOrgList();
+//    		SimpleOrganization emptySimpleOrgItem = new SimpleOrganization();
+//    		emptySimpleOrgItem.setOrgId(-1);
+//    		emptySimpleOrgItem.setOrgName("");
+//    		mSimpleOrgList.add(0, emptySimpleOrgItem);
+        	
+        	int rspOrgId = qcData.getOrganizationId();
+        	for(int j = 0; j < mSimpleOrgList.size(); j++){
+        		if(mSimpleOrgList.get(j).getOrgId() == rspOrgId){
+        			mComposeOrgSpinn.setSelection(j);
+        			break;
+        		}
+        	}
+        	
+        	int rspPersonId = qcData.getResponsiblePeronId();
+        	mPersonList.clear();
+			User emptyUserItem = new User();
+			emptyUserItem.setId(-1);
+			emptyUserItem.setName("");
+			mPersonList.add(0, emptyUserItem);
+			if (rspOrgId != -1) {
+				mPersonList.addAll(AccountMngr
+						.getPersonListByOrgId(rspOrgId));
+			}
+
+			mPersonSimpleAdapter = new PersonSimpleAdapter(getActivity(),
+					mPersonList);
+			mComposeRspPersonSpinn.setAdapter(mPersonSimpleAdapter);
+			mComposeRspPersonSpinn.setSelection(0);
+			
+			for(int k = 0; k < mPersonList.size(); k++){
+        		if(mPersonList.get(k).getId() == rspPersonId){
+        			mComposeRspPersonSpinn.setSelection(k);
+        			Log.d("Test", "andy debug, k = " + k);
+        			break;
+        		}
+        	}
+        }
+
+	}
+	
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        
+        Log.d(TAG, "onActivityCreated");
+        
+        if (savedInstanceState != null) {
+        	qcData = null;
+        } else {
+            Bundle args = getArguments();
+            if(args != null){
+            	qcData = (QuickCheckRspData) args.getSerializable(ARG_REFERENCE);
+            }
+        }
+
+        initViewData();
+    }
   
   @Override
   public void onAttach(Activity activity) {
@@ -321,7 +407,7 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
 			mIssueRspOrgIndex = selectedSimpleOrg.getOrgId();
 
 			// Set the first item as empty user
-			mPersonList = new ArrayList<User>();
+			mPersonList.clear();
 			User emptyUserItem = new User();
 			emptyUserItem.setId(-1);
 			emptyUserItem.setName("");
@@ -330,11 +416,9 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
 				mPersonList.addAll(AccountMngr
 						.getPersonListByOrgId(mIssueRspOrgIndex));
 			}
-
-			mPersonSimpleAdapter = new PersonSimpleAdapter(getActivity(),
-					mPersonList);
-			mComposeRspPersonSpinn.setAdapter(mPersonSimpleAdapter);
-			mComposeRspPersonSpinn.setSelection(0);
+			
+			mPersonSimpleAdapter.notifyDataSetChanged();
+			
 		}
 
 		@Override
@@ -518,7 +602,6 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
         };
         CloudCheckApplication.mAsyncHttpClientApi.post(relativeUrl, mQuickCheckReqJsonData.toString(), fileList, responseHandler);
 	}	
-	
 
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {

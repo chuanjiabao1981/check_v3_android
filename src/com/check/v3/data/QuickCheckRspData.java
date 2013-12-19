@@ -1,6 +1,7 @@
 package com.check.v3.data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class QuickCheckRspData implements Serializable {
 
@@ -34,6 +35,7 @@ public class QuickCheckRspData implements Serializable {
 	private String level;
 	private String state;
 	private String description;
+	private ArrayList<ImageItemData> images;
 
 	public int getId() {
 		return id;
@@ -121,6 +123,14 @@ public class QuickCheckRspData implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	public ArrayList<ImageItemData> getImages() {
+		return images;
+	}
+
+	public void setImages(ArrayList<ImageItemData> images) {
+		this.images = images;
 	}
 
 	@Override

@@ -157,7 +157,7 @@
                 android:textColor="#000000" />
 
             <com.check.v3.widget.CustomGridView
-                android:id="@+id/org_list"
+                android:id="@+id/issue_editor_photo_list"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:columnWidth="90dp"

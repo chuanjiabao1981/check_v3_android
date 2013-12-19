@@ -14,4 +14,6 @@ public class ApiConstant
   public static final int QUICK_CHECK_EDIT_NEW_ACTION = 1;
   public static final int QUICK_CHECK_EDIT_EXIST_ACTION = 2;
   public static final int QUICK_CHECK_VIEW_ACTION = 3;
+  
+  public static final String KEY_QUICK_CHECK_VIEW_PHOTO_URL_LIST = "qc_view_photo_url_list";
 }

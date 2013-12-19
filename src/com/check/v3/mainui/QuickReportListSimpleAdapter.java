@@ -20,36 +20,36 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class QuickCheckListSimpleAdapter extends BaseAdapter {
+public class QuickReportListSimpleAdapter extends BaseAdapter {
 	private Context context;
 
 	private LayoutInflater layoutInflater;
-	private String baseUrl = "http://www.365check.net:8088/check-service/api/v1/";
+	private String baseUrl = "http://www.365check.net:8088/check-service/check-data/";
 	private RequestQueue mQueue;
     private ImageLoader mImageLoader;
     
-	private ArrayList<QuickCheckListItemData> list;
+	public ArrayList<QuickCheckListItemData> mList;
 	
 	private int maxSize = 5 * 1024 * 1024;
 
-	public QuickCheckListSimpleAdapter(Context context,
+	public QuickReportListSimpleAdapter(Context context,
 			ArrayList<QuickCheckListItemData> quickCheckListItemData) {
 		this.context = context;
 
 		layoutInflater = LayoutInflater.from(context);
 
-		this.list = quickCheckListItemData;
+		this.mList = quickCheckListItemData;
 		mQueue = CloudCheckApplication.getInstance().getRequestQueue();
 		CloudCheckApplication.getInstance().setCookie();
 		mImageLoader = new ImageLoader(mQueue, new LruBitmapCache(maxSize));
 	}
 
 	public int getCount() {
-		return this.list != null ? this.list.size() : 0;
+		return this.mList != null ? this.mList.size() : 0;
 	}
 
 	public Object getItem(int position) {
-		return this.list.get(position);
+		return this.mList.get(position);
 	}
 
 	public long getItemId(int position) {
@@ -76,12 +76,12 @@ public class QuickCheckListSimpleAdapter extends BaseAdapter {
 			holder = (ViewHolder) convertView.getTag();
 		}
 		
-		QuickCheckListItemData qcListItemData = list.get(position);
+		QuickCheckListItemData qcListItemData = mList.get(position);
 		ArrayList<ImageItemData> imageList = qcListItemData.getImages();
 		
 //		holder.issue_photo_preview_image.setImageResource(R.drawable.ic_photo_preview_default_image);
 		
-		ImageListener listener = ImageLoader.getImageListener(holder.issue_photo_preview_image, android.R.drawable.ic_menu_rotate, R.drawable.ic_photo_preview_default_image);
+		ImageListener listener = ImageLoader.getImageListener(holder.issue_photo_preview_image, R.drawable.ic_photo_preview_default_image, R.drawable.ic_photo_preview_default_image);
 		
 		if(imageList != null && imageList.size() > 0){
 			int imageIdPart = imageList.get(0).getId();
@@ -90,7 +90,8 @@ public class QuickCheckListSimpleAdapter extends BaseAdapter {
 			mImageLoader.get(imageFullUrlStr, listener);
 //			mImageLoader.get("http://imgstatic.baidu.com/img/image/shouye/fanbingbing.jpg", listener);
 		}else{
-			mImageLoader.get("http://imgstatic.baidu.com/img/image/shouye/fanbingbing.jpg", listener);
+//			mImageLoader.get("http://imgstatic.baidu.com/img/image/shouye/fanbingbing.jpg", listener);
+			holder.issue_photo_preview_image.setImageResource(R.drawable.ic_photo_preview_default_image);
 		}
 		
 		holder.issue_rsp_person_text.setText(qcListItemData.getResponsiblePersonName());

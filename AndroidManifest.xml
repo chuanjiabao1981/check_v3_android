@@ -33,6 +33,7 @@
             android:configChanges="mcc|mnc|keyboard|keyboardHidden|orientation|screenSize"> </activity>
         <activity android:name="com.check.v3.mainui.QuickCheckComposeActivity" android:windowSoftInputMode="stateHidden" 
             android:configChanges="mcc|mnc|keyboard|keyboardHidden|orientation|screenSize"> </activity>
+        <activity android:name="com.check.v3.mainui.SubActivity" />
     </application>
 </manifest>
 

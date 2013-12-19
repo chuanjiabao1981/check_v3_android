@@ -178,7 +178,7 @@ public class LoginTask{
             	mProgressStatusView.dismiss();
             	
 //            	String rspStr = new String(errorResponse);
-				Log.d(TAG, "error response : " + e.toString());
+				Log.d(TAG, "error response : " + e.toString() + ", statuscode = " + statusCode);
             }
         };
         CloudCheckApplication.mAsyncHttpClientApi.post("sessions/create", mLoginJsonData.toString(), responseHandler);
