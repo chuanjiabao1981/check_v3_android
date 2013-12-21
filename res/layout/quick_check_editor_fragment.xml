@@ -167,6 +167,18 @@
                 android:stretchMode="columnWidth"
                 android:verticalSpacing="10dp" >
             </com.check.v3.widget.CustomGridView>
+            
+			<com.check.v3.widget.CustomGridView
+                android:id="@+id/issue_editor_delete_photo_list"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:columnWidth="90dp"
+                android:gravity="center"
+                android:horizontalSpacing="10dp"
+                android:numColumns="auto_fit"
+                android:stretchMode="columnWidth"
+                android:verticalSpacing="10dp" >
+            </com.check.v3.widget.CustomGridView>            
         </LinearLayout>
     </ScrollView>
 </FrameLayout>

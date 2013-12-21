@@ -31,6 +31,8 @@ public class QuickCheckViewerFragment extends SherlockFragment {
 	private TextView mIssueRspPersonTextView;
 	private CustomGridView mIssuePhotoViewerGridView;
 	private ImageViewerSimpleAdapter mImageViewerSimpleAdapter;
+	private PhotoGridViewSimpleAdapter mPhotoGridViewSimpleAdapter;
+	
 	QuickCheckRspData qcData;
 	QuickCheckViewerFragmentListener mQuickCheckViewerFragmentListener;
 
@@ -132,8 +134,11 @@ public class QuickCheckViewerFragment extends SherlockFragment {
     	mIssueRspPersonTextView.setText(data.getResponsiblePersonName());
     	    	
     	if(data.getImages() != null && data.getImages().size() > 0){
-    		mImageViewerSimpleAdapter = new ImageViewerSimpleAdapter(getActivity(), data.getImages());
-    		mIssuePhotoViewerGridView.setAdapter(mImageViewerSimpleAdapter);
+//    		mImageViewerSimpleAdapter = new ImageViewerSimpleAdapter(getActivity(), data.getImages());
+//    		mIssuePhotoViewerGridView.setAdapter(mImageViewerSimpleAdapter);
+    		
+    		mPhotoGridViewSimpleAdapter = new PhotoGridViewSimpleAdapter(getActivity(), data.getImages(), false);
+    		mIssuePhotoViewerGridView.setAdapter(mPhotoGridViewSimpleAdapter);
     	}
     }
     

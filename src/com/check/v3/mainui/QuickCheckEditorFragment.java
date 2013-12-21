@@ -53,6 +53,7 @@ import com.check.v3.CloudCheckApplication;
 import com.check.v3.VolleyErrorHelper;
 import com.check.v3.CloudCheckApplication.AccountMngr;
 import com.check.v3.asynchttp.AsyncHttpResponseHandler;
+import com.check.v3.data.ImageItemData;
 import com.check.v3.data.IssueLevel;
 import com.check.v3.data.QuickCheckGetListRspData;
 import com.check.v3.data.QuickCheckListItemData;
@@ -81,6 +82,9 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
     
     private CustomGridView mPhotoGridView;
     AttachmentSimpleAdapter mAttachmentsSimpleAdapter;
+    
+    private CustomGridView mDeletePhotoGridView;
+    PhotoGridViewSimpleAdapter mPhotoGridViewSimpleAdapter;
     
 	private static final int REQUEST_IMAGE_CAPTURE = 2;
 	private static final int REQUEST_PHOTO_LIBRARY = 3;
@@ -118,6 +122,8 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
 	private Uri mImageUri;
     
     ArrayList<HashMap<String, Object>> imageItemsList;
+    ArrayList<Integer> mImageNeedToDeletedList;
+    ArrayList<ImageItemData> mOrigImageList;
     ArrayList<File> fileListToAdd;
     ArrayList<Integer> fileListToDelete;
     
@@ -154,6 +160,7 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
 		deadLinedatePicker = (EditText) rootView.findViewById(R.id.issue_dealine_picker);
 		mIssueDescriptionEditText = (EditText) rootView.findViewById(R.id.issue_dscp_edit);
 		mPhotoGridView = (CustomGridView) rootView.findViewById(R.id.issue_editor_photo_list);
+		mDeletePhotoGridView = (CustomGridView) rootView.findViewById(R.id.issue_editor_delete_photo_list);
 	
 		mIssueLevelSimpleAdapter = new IssueLevelSimpleAdapter(getActivity(), AccountMngr.getIssueLevelList());
 		mComposeIssueLevelSpinn.setAdapter(mIssueLevelSimpleAdapter);
@@ -198,7 +205,7 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
 
 		mAttachmentsSimpleAdapter = new AttachmentSimpleAdapter(getActivity(),
 				imageItemsList);
-		mAttachmentsSimpleAdapter.setDeleteHandler(mAttachmentDeleteHandler);
+		mAttachmentsSimpleAdapter.setDeleteHandler(mAddAttachmentDeleteHandler);
 
 		mPhotoGridView.setAdapter(mAttachmentsSimpleAdapter);
 		mPhotoGridView.setOnItemClickListener(this);
@@ -265,6 +272,19 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
         			break;
         		}
         	}
+			
+			if(qcData.getImages() != null && qcData.getImages().size() > 0){
+				mImageNeedToDeletedList = new ArrayList<Integer>();
+				mOrigImageList = qcData.getImages();
+				mPhotoGridViewSimpleAdapter = new PhotoGridViewSimpleAdapter(getActivity(),
+						mOrigImageList, true);
+				mPhotoGridViewSimpleAdapter.setDeleteHandler(mDeleteAttachmentDeleteHandler);
+
+				mDeletePhotoGridView.setAdapter(mPhotoGridViewSimpleAdapter);
+				mDeletePhotoGridView.setOnItemClickListener(this);
+			}else{
+				mDeletePhotoGridView.setVisibility(View.GONE);
+			}
         }
 
 	}
@@ -445,11 +465,21 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
 
 	};
 	
-	private AttachmentSimpleAdapter.AttachmentDeleteHandler mAttachmentDeleteHandler = new AttachmentSimpleAdapter.AttachmentDeleteHandler() {
+	private AttachmentSimpleAdapter.AttachmentDeleteHandler mAddAttachmentDeleteHandler = new AttachmentSimpleAdapter.AttachmentDeleteHandler() {
 		@Override
 		public void doDeleteAttachment(int position) {
 			imageItemsList.remove(position);
 	        mAttachmentsSimpleAdapter.notifyDataSetChanged();
+		}
+	};
+	
+	private PhotoGridViewSimpleAdapter.AttachmentDeleteHandler mDeleteAttachmentDeleteHandler = new PhotoGridViewSimpleAdapter.AttachmentDeleteHandler() {
+		@Override
+		public void doDeleteAttachment(int position) {
+			Log.d(TAG, "delete pos = " + position + "id = " + mOrigImageList.get(position).getId());
+			mImageNeedToDeletedList.add((Integer)mOrigImageList.get(position).getId());
+			mOrigImageList.remove(position);
+			mPhotoGridViewSimpleAdapter.notifyDataSetChanged();
 		}
 	};
 	

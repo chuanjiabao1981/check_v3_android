@@ -4,9 +4,13 @@
     <string name="dialog_title">dialog_title</string>
     <string name="dialog_message">dialog_message</string>
     
-    <string name="generic_server_down">Generic server down</string>
-    <string name="no_internet">No wireless network connection</string>
-    <string name="generic_error">Generic error</string>
+    <string name="generic_server_down">服务器端错误</string>
+    <string name="no_internet">网络连接错误，请检查网络是否正常</string>
+    <string name="generic_error">系统错误</string>
+    
+    <string name="connection_timeout_error">连接超时，请检查网络</string>
+    <string name="cookie_expired_error">会话超时，请重新登录</string>
+    
     
     <string-array name="orig_array">
         <item>政务处</item>

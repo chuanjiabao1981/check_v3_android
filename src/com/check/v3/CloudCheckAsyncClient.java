@@ -17,6 +17,7 @@ import com.check.v3.data.Session;
 import com.check.v3.preferences.PrefConstant;
 
 public class CloudCheckAsyncClient {
+//	private static final String BASE_URL = "http://42.121.55.211:8088/check-service/api/v1/";
 	private static final String BASE_URL = "http://www.365check.net:8088/check-service/api/v1/";
 
 	private AsyncHttpClient client;

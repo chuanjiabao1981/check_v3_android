@@ -1,8 +1,11 @@
 package com.check.v3.login;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.apache.http.Header;
+import org.apache.http.client.HttpResponseException;
+import org.apache.http.conn.HttpHostConnectException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,6 +23,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.check.v3.AsyncHttpExeptionHelper;
 import com.check.v3.CloudCheckApplication;
 import com.check.v3.CloudCheckAsyncClient;
 import com.check.v3.VolleyErrorHelper;
@@ -29,6 +33,7 @@ import com.check.v3.data.OrganizationsByAccount;
 import com.check.v3.CloudCheckApplication.AccountMngr;
 import com.check.v3.data.ResponseData;
 import com.check.v3.data.Session;
+import com.check.v3.exception.HttpException;
 import com.check.v3.mainui.MainActivity;
 import com.check.v3.preferences.DataPreference;
 import com.check.v3.preferences.PrefConstant;
@@ -178,6 +183,19 @@ public class LoginTask{
             	mProgressStatusView.dismiss();
             	
 //            	String rspStr = new String(errorResponse);
+//            	if(e instanceof HttpResponseException){
+//            		Log.e(TAG, "andy debug, it is a HttpResponseException error");
+//            		String errRspStr = new String(errorResponse);
+//            		Toast.makeText(mActivity, "" + errRspStr, Toast.LENGTH_SHORT).show();
+//            	}
+//            	else if(e instanceof IOException){
+//            		Log.e(TAG, "andy debug, it is a IOException error");
+//            		Toast.makeText(mActivity, "网络错误，请检查网络是否正常", Toast.LENGTH_SHORT).show();
+//            	}
+            	
+            	String errorStr = AsyncHttpExeptionHelper.getMessage(mActivity.getApplicationContext(), e, errorResponse, statusCode);
+            	Toast.makeText(mActivity, errorStr, Toast.LENGTH_SHORT).show();
+            	
 				Log.d(TAG, "error response : " + e.toString() + ", statuscode = " + statusCode);
             }
         };
@@ -217,7 +235,10 @@ public class LoginTask{
 
             @Override
             public void onFailure(int statusCode, Header[] headers,	byte[] errorResponse, Throwable e) {
-
+            	String errorStr = AsyncHttpExeptionHelper.getMessage(mActivity.getApplicationContext(), e, errorResponse, statusCode);
+            	Toast.makeText(mActivity, errorStr, Toast.LENGTH_SHORT).show();
+            	
+				Log.d(TAG, "error response : " + e.toString() + ", statuscode = " + statusCode);
             }
         };
         CloudCheckApplication.mAsyncHttpClientApi.get("organizations", null, responseHandler);		
