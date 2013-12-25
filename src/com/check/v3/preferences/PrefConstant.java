@@ -9,4 +9,7 @@ public class PrefConstant
   public static final String SERVER_HOST = "SERVER_HOST";
   public static final String SESSION_ID = "SESSION_ID";
   public static final String USER_NAME = "USER_NAME";
+  public static final String USER_ROLE = "USER_ROLE";
+  public static final String USER_ID = "USER_ID";
+  public static final String USER_ACCOUNT = "USER_ACCOUNT";
 }

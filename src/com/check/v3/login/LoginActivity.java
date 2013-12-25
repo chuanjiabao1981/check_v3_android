@@ -348,4 +348,36 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 			isShowMenu = true;
 		}
 	}
+	
+	private void enableLogin() {
+		userNameEditText.setEnabled(true);
+		passwordEditText.setEnabled(true);
+		loginButton.setEnabled(true);
+	}
+
+	private void disableLogin() {
+		userNameEditText.setEnabled(false);
+		passwordEditText.setEnabled(false);
+		loginButton.setEnabled(false);
+	}
+	
+
+//	public void saveLoginInfo() {
+//		if (savePasswordCheckBox.isChecked()) {
+//			String userNameStr = userNameEditText.getText().toString();
+//			String passwdStr = passwordEditText.getText().toString();
+//			String userRoleStr = mSession.getRole();
+//			String userIdStr = mSession.getId();
+//			String userAccountStr = mSession.getAccount();
+//			String sessionIdStr = mSession.getJsession_id();
+//
+//			mDataPreference.saveData(PrefConstant.USER_NAME, userNameStr);
+//			mDataPreference.saveData(PrefConstant.PASSWORD, passwdStr);
+//			mDataPreference.saveData(PrefConstant.USER_ROLE, userRoleStr);
+//			mDataPreference.saveData(PrefConstant.USER_ID, userIdStr);
+//			mDataPreference.saveData(PrefConstant.USER_ACCOUNT, userAccountStr);
+//			mDataPreference.saveData(PrefConstant.SESSION_ID, sessionIdStr);
+//		}
+//
+//	}
 }

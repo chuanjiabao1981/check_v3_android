@@ -7,8 +7,6 @@ import java.util.HashMap;
 
 import android.util.Log;
 
-import com.check.v3.CloudCheckApplication;
-
 /**
  * Debug Timer
  * 
@@ -57,9 +55,7 @@ public class DebugTimer {
 	 * @return
 	 */
 	public static long between(String tag, int startOrEnd) {
-		if (CloudCheckApplication.DEBUG) {
-			Log.v("DEBUG", tag + " " + startOrEnd);
-		}
+		Log.v("DEBUG", tag + " " + startOrEnd);
 		switch (startOrEnd) {
 		case START:
 			return mark(tag);

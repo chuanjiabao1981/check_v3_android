@@ -4,18 +4,22 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
+import com.check.v3.mainui.DatePickerDialogFragment.DatePickerDialogFragmentListener;
 
 
 public class ProgressDialogFragment extends SherlockDialogFragment {
+	private static final String ARG_DIALOG_ID = "dialog_id";
     protected static final String ARG_TITLE = "title";
     protected static final String ARG_MESSAGE = "message";
 
-    public static ProgressDialogFragment newInstance(String title, String message) {
+    public static ProgressDialogFragment newInstance(int dialogId, String title, String message) {
         ProgressDialogFragment fragment = new ProgressDialogFragment();
 
         Bundle args = new Bundle();
+        args.putInt(ARG_DIALOG_ID, dialogId);
         args.putString(ARG_TITLE, title);
         args.putString(ARG_MESSAGE, message);
         fragment.setArguments(args);
@@ -32,24 +36,39 @@ public class ProgressDialogFragment extends SherlockDialogFragment {
 
         ProgressDialog dialog = new ProgressDialog(getActivity());
         dialog.setIndeterminate(true);
-        dialog.setTitle(title);
-        dialog.setMessage(message);
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+        if(!TextUtils.isEmpty(title)){
+        	dialog.setTitle(title);
+        }
+        if(!TextUtils.isEmpty(message)){
+        	dialog.setMessage(message);
+        }
 
         return dialog;
     }
 
+    private int getDialogId() {
+        return getArguments().getInt(ARG_DIALOG_ID);
+    }
+    
     @Override
     public void onCancel(DialogInterface dialog) {
-        CancelListener listener = (CancelListener) getActivity();
-        if (listener != null && listener instanceof CancelListener) {
-            listener.onCancel(this);
-        }
-
-        super.onCancel(dialog);
+    	super.onCancel(dialog);
+        getListener().dialogCancelled(getDialogId());
     }
 
 
-    public interface CancelListener {
-        void onCancel(ProgressDialogFragment fragment);
+    public interface ProgressDialogFragmentListener {
+        void dialogCancelled(int dialogId);
+    }
+    
+    private ProgressDialogFragmentListener getListener() {
+        try {
+            return (ProgressDialogFragmentListener) getTargetFragment();
+        } catch (ClassCastException e) {
+            throw new ClassCastException(getTargetFragment().getClass() +
+                    " must implement ProgressDialogFragmentListener");
+        }
     }
 }

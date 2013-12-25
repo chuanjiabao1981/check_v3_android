@@ -4,27 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.Header;
-import org.json.JSONObject;
-
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.Request.Method;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.check.client.R;
+import com.check.v3.AsyncHttpExeptionHelper;
 import com.check.v3.CloudCheckApplication;
-import com.check.v3.VolleyErrorHelper;
 import com.check.v3.CloudCheckApplication.AccountMngr;
 import com.check.v3.api.ApiConstant;
 import com.check.v3.asynchttp.AsyncHttpResponseHandler;
 import com.check.v3.data.QuickCheckGetListRspData;
 import com.check.v3.data.QuickCheckListItemData;
 import com.check.v3.mainui.ConfirmationDialogFragment.ConfirmationDialogFragmentListener;
+import com.check.v3.util.CommonHelper;
 import com.check.v3.widget.CustomPushToRefreshListView;
 import com.check.v3.widget.CustomPushToRefreshListView.OnLoadMoreListener;
 import com.check.v3.widget.CustomPushToRefreshListView.OnRefreshListener;
@@ -58,10 +52,11 @@ public class QuickReportListFragment extends SherlockFragment implements
 	private static final int LOAD_DATA_FINISH = 10;
 	private static final int REFRESH_DATA_FINISH = 11;
 	private static final int NO_MORE_DATA = 12;
+	
+	private static final int LOAD_MODE_PULL_REFRESH = 1;
+	private static final int LOAD_MODE_LOAD_MORE = 2;
 
-	private RequestQueue mQueue;
-	Gson gson;
-	private JsonObjectRequest mGetQuickCheckListJasonObjReq;
+	private Gson gson;
 	private QuickCheckGetListRspData mQuickCheckGetListRspData;
 	
 	private QuickReportListSimpleAdapter mQuickReportListSimpleAdapter;
@@ -70,6 +65,7 @@ public class QuickReportListFragment extends SherlockFragment implements
 	private int mCurrentPage = 0;
 	private int mTotalRecords;
 	private int mQuickReportItemCount = 0;
+	private String mRelativeUrl;
 
 	String[] random_check_list_arry = {""};
 	private ArrayList<String> mQuickCheckDscpList;
@@ -130,25 +126,10 @@ public class QuickReportListFragment extends SherlockFragment implements
 		setHasOptionsMenu(true);
 
 		gson = new Gson();
-		mQueue = CloudCheckApplication.getInstance().getRequestQueue();
 		mQuickCheckDscpList = new ArrayList<String>();
 		mQuickCheckDscpList.add("");
 		
 		mQuickCheckDataList = new ArrayList<QuickCheckListItemData>();
-//		QuickCheckListItemData qcItemData = new QuickCheckListItemData();
-//		qcItemData.setId(10);
-//		qcItemData.setSubmitterId(15);
-//		qcItemData.setSubmitterName("Andy Qiao");
-//		qcItemData.setResponsiblePeronId(20);
-//		qcItemData.setResponsiblePersonName("Andy Qiao");
-//		qcItemData.setOrganizationId(100);
-//		qcItemData.setOrganizationName("总务处");
-//		qcItemData.setDeadline("2013-12-15");
-//		qcItemData.setState("OPENED");
-//		qcItemData.setLevel("HIGH");
-//		qcItemData.setDescription("这个消防问题非常严重，请各部门协调及时予以解决");
-//		mQuickCheckDataList.add(qcItemData);
-		
 	}
 	
 	private void initView() {
@@ -167,8 +148,8 @@ public class QuickReportListFragment extends SherlockFragment implements
 			@Override
 			public void onRefresh() {
 				// TODO 下拉刷新
-				Log.e(TAG, "onRefresh");
-				loadData(0);
+				Log.d(TAG, "onRefresh");
+				loadData(LOAD_MODE_PULL_REFRESH);
 			}
 		});
 
@@ -177,8 +158,8 @@ public class QuickReportListFragment extends SherlockFragment implements
 			@Override
 			public void onLoadMore() {
 				// TODO 加载更多
-				Log.e(TAG, "onLoad");
-				loadData(1);
+				Log.d(TAG, "onLoad");
+				loadData(LOAD_MODE_LOAD_MORE);
 			}
 		});
 		
@@ -188,7 +169,7 @@ public class QuickReportListFragment extends SherlockFragment implements
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// 此处传回来的position和mAdapter.getItemId()获取的一致;
-				Log.e(TAG, "click position:" + position);
+				Log.d(TAG, "click position:" + position);
 				Toast.makeText(
 						getActivity(),
 						"You have selected " + position
@@ -210,7 +191,7 @@ public class QuickReportListFragment extends SherlockFragment implements
 				AsyncHttpResponseHandler responseHandler;
 				
 				switch (type) {
-				case 0:
+				case LOAD_MODE_PULL_REFRESH:
 					mQuickReportItemCount = 0;
 					
 					mCurrentPage = 1;
@@ -248,13 +229,16 @@ public class QuickReportListFragment extends SherlockFragment implements
 				            Message _Msg = mHandler.obtainMessage(REFRESH_DATA_FINISH,
 												_List);
 							mHandler.sendMessage(_Msg);
+							
+							String errorStr = AsyncHttpExeptionHelper.getMessage(getActivity(), e, errorResponse, statusCode);
+			            	CommonHelper.notify(getActivity(), errorStr);
 			            }
 			        };
 			        CloudCheckApplication.mAsyncHttpClientApi.get("organizations/" + orgId + "/quick_reports?page=" + mCurrentPage, null, responseHandler);
 
 					break;
 
-				case 1:					
+				case LOAD_MODE_LOAD_MORE:					
 					if(mCurrentPage < mTotalPages){
 						mCurrentPage++;
 					}else{
@@ -300,6 +284,9 @@ public class QuickReportListFragment extends SherlockFragment implements
 			            	Message _Msg = mHandler.obtainMessage(LOAD_DATA_FINISH,
 									_List);
 							mHandler.sendMessage(_Msg);
+							
+							String errorStr = AsyncHttpExeptionHelper.getMessage(getActivity(), e, errorResponse, statusCode);
+			            	CommonHelper.notify(getActivity(), errorStr);
 			            }
 			        };
 			        CloudCheckApplication.mAsyncHttpClientApi.get("organizations/" + orgId + "/quick_reports?page=" + mCurrentPage, null, responseHandler);
@@ -307,7 +294,7 @@ public class QuickReportListFragment extends SherlockFragment implements
 					break;
 				}
 	}
-
+	
 	@Override
 	public void onPause() {
 		super.onPause();
@@ -338,14 +325,6 @@ public class QuickReportListFragment extends SherlockFragment implements
 //		doGetQuickCheckListInfo();
 		
 	}
-	
-//	public void doGetQuickCheckListInfo() {
-//		int page = 1;
-//		int orgId = AccountMngr.getGlobalOrgId();
-//		Log.d(TAG, "req orgId = " + orgId);
-//		mGetQuickCheckListJasonObjReq = builderGetListReq(orgId, page);
-//		mQueue.add(mGetQuickCheckListJasonObjReq);
-//	}
 	
 	public void doGetQuickCheckListInfo() {
 		int page = 1;
@@ -381,37 +360,6 @@ public class QuickReportListFragment extends SherlockFragment implements
         };
         CloudCheckApplication.mAsyncHttpClientApi.get("organizations/" + orgId + "/quick_reports?page=" + page, null, responseHandler);
 	}	
-	
-	
-	private JsonObjectRequest builderGetListReq(int orgId, int page){
-		JsonObjectRequest getReq = new JsonObjectRequest(Method.GET, 
-				"http://www.365check.net:8088/check-service/api/v1/organizations/" + orgId + "/quick_reports?page=" + page, null,
-	            new Response.Listener<JSONObject>() {
-	        @Override
-	        public void onResponse(JSONObject response) {
-	            Log.d(TAG, "get report response : " + response.toString());
-	            
-	            
-	            mQuickCheckGetListRspData = gson.fromJson(response.toString(), QuickCheckGetListRspData.class);
-	            
-	            ArrayList<QuickCheckListItemData> quickCheckList = mQuickCheckGetListRspData.getQuickReports();
-	            for(int i = 0; i < quickCheckList.size(); i++){
-	            	mQuickCheckDscpList.add(i, quickCheckList.get(i).getDescription());
-	            	mQuickCheckDataList.add(i, quickCheckList.get(i));
-	            }
-	            mHandler.obtainMessage(MSG_REMOVE_PROGRESS_DIALOG).sendToTarget();        
-	    }
-	    }, new Response.ErrorListener() {
-
-			@Override
-			public void onErrorResponse(VolleyError errInfo) {
-				String errorStr = VolleyErrorHelper.getMessage(getActivity().getApplicationContext(), errInfo);
-				Log.d(TAG, "error response : " + errorStr);
-			}
-		});
-		
-		return getReq;
-	}
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

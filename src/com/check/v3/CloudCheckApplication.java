@@ -25,13 +25,14 @@ import com.android.volley.RequestQueue;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.HttpClientStack;
 import com.android.volley.toolbox.Volley;
-import com.check.v3.asynchttp.MySSLSocketFactory;
 import com.check.v3.data.IssueLevel;
 import com.check.v3.data.Organization;
 import com.check.v3.data.SimpleOrganization;
 import com.check.v3.data.User;
+import com.check.v3.data.Session;
 import com.check.v3.preferences.DataPreference;
 import com.check.v3.preferences.PrefConstant;
+import com.google.gson.Gson;
 
 import android.app.Application;
 import android.content.Context;
@@ -45,13 +46,13 @@ public class CloudCheckApplication extends Application {
 	 */
 	public static final String TAG = "CloudCheckApplication";
 
-	public final static boolean DEBUG = Configuration.getDebug();
-
 	public static Context mContext;
 	// http client instance  
 	private DefaultHttpClient mHttpClient;
 	
 	public static CloudCheckAsyncClient mAsyncHttpClientApi;
+
+	public static Gson mGson;
 	
 	private DataPreference mDataPreferences;
 	
@@ -63,6 +64,7 @@ public class CloudCheckApplication extends Application {
 	private static HashMap<String, Integer> mName2IdOrgHashMap;
 	private static HashMap<Integer, ArrayList<String>> mOrgId2UsersNameHashMap;
 	private static HashMap<Integer, ArrayList<User>> mOrgId2UsersHashMap;
+	private static Session mUserInfo;
 	
 	private static int mSelectedOrgId = -1;
 
@@ -75,6 +77,14 @@ public class CloudCheckApplication extends Application {
 	}
 	
 	public static class AccountMngr{
+		public static void saveUserInfo(Session userInfo){
+			mUserInfo = userInfo;
+		}
+		
+		public static Session getUserInfo(){
+			return mUserInfo;
+		}
+		
 		public static void initOrgList(ArrayList<Organization> orgList){
 			mOrganizationList = orgList;
 			mId2NameOrgHashMap = new HashMap<Integer, String>();
@@ -183,6 +193,8 @@ public class CloudCheckApplication extends Application {
 		mDataPreferences = new DataPreference(this.getApplicationContext());
 		
 		mAsyncHttpClientApi = new CloudCheckAsyncClient(this.getApplicationContext());
+
+		mGson = new Gson();
 	}
 
 	/**

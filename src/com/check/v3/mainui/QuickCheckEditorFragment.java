@@ -23,8 +23,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
-import android.provider.MediaStore.MediaColumns;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,37 +43,31 @@ import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.Request.Method;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.check.client.R;
+import com.check.v3.AsyncHttpExeptionHelper;
 import com.check.v3.CloudCheckApplication;
-import com.check.v3.VolleyErrorHelper;
 import com.check.v3.CloudCheckApplication.AccountMngr;
 import com.check.v3.asynchttp.AsyncHttpResponseHandler;
 import com.check.v3.data.ImageItemData;
 import com.check.v3.data.IssueLevel;
-import com.check.v3.data.QuickCheckGetListRspData;
-import com.check.v3.data.QuickCheckListItemData;
+import com.check.v3.data.QuickCheckReqData;
 import com.check.v3.data.QuickCheckReqFilePartData;
 import com.check.v3.data.QuickCheckRspData;
-import com.check.v3.data.Session;
 import com.check.v3.data.SimpleOrganization;
 import com.check.v3.data.User;
-import com.check.v3.login.LoginApiConstant;
 import com.check.v3.mainui.ConfirmationDialogFragment.ConfirmationDialogFragmentListener;
 import com.check.v3.mainui.DatePickerDialogFragment.DatePickerDialogFragmentListener;
 import com.check.v3.mainui.ListItemDialogFragment.ListItemDialogFragmentListener;
-import com.check.v3.preferences.PrefConstant;
+import com.check.v3.mainui.ProgressDialogFragment.ProgressDialogFragmentListener;
+import com.check.v3.util.CommonHelper;
 import com.check.v3.util.FileHelper;
 import com.check.v3.util.UriUtils;
 import com.check.v3.widget.CustomGridView;
 import com.google.gson.Gson;
 
 public class QuickCheckEditorFragment extends SherlockFragment implements CustomGridView.OnItemClickListener, OnClickListener,
-			ListItemDialogFragmentListener, ConfirmationDialogFragmentListener, DatePickerDialogFragmentListener {
+			ListItemDialogFragmentListener, ConfirmationDialogFragmentListener, DatePickerDialogFragmentListener,
+			ProgressDialogFragmentListener{
 	private static String TAG = "QuickCheckEditorFragment";
     public static final String ARG_SELECTED_NUMBER = "menu_selected_position";
     private static final String ARG_REFERENCE = "reference";
@@ -88,6 +82,9 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
     
 	private static final int REQUEST_IMAGE_CAPTURE = 2;
 	private static final int REQUEST_PHOTO_LIBRARY = 3;
+	
+	private static final int ACTION_MODE_NEW_ADDED = 1;
+	private static final int ACTION_MODE_EDIT_EXIST = 2;
 	
 	private Context mContext;
 	
@@ -105,15 +102,15 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
 	ArrayList<SimpleOrganization> mSimpleOrgList;
 	ArrayList<User> mPersonList;
 	
+	private int mOrigReportId = 0;
+	private int mActionMode = ACTION_MODE_NEW_ADDED;
 	private String mIssueLevelId;
 	private int mIssueRspOrgIndex;
 	private int mIssueRspPersonIndex;
 	private String mIssueDeadLineStr = "";
 	private String mIssueDescriptionStr = "";
 	
-	JSONObject mQuickCheckReqJsonData;
-	private JsonObjectRequest mQuickCheckSubmitJasonObjReq;
-	private RequestQueue mQueue;
+	private QuickCheckReqData mQuickCheckReqData;
 	Gson gson;
 	
 	private static final int MAX_BITMAP_SIZE = 400;
@@ -211,7 +208,6 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
 		mPhotoGridView.setOnItemClickListener(this);
 		
 		gson = new Gson();	    
-	    mQueue = CloudCheckApplication.getInstance().getRequestQueue();
 	    
 		return rootView;
 	}
@@ -223,6 +219,8 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
         }
         
         if(qcData != null){
+        	mActionMode = ACTION_MODE_EDIT_EXIST;
+        	mOrigReportId = qcData.getId();
         	mIssueDescriptionEditText.setText(qcData.getDescription());
         	deadLinedatePicker.setText(qcData.getDeadline());
         	
@@ -239,9 +237,9 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
 //    		SimpleOrganization emptySimpleOrgItem = new SimpleOrganization();
 //    		emptySimpleOrgItem.setOrgId(-1);
 //    		emptySimpleOrgItem.setOrgName("");
-//    		mSimpleOrgList.add(0, emptySimpleOrgItem);
+//    		mSimpleOrgList.add(0, emptySimpleOrgItem);        	
         	
-        	int rspOrgId = qcData.getOrganizationId();
+        	int rspOrgId = qcData.getOrganizationId();      	
         	for(int j = 0; j < mSimpleOrgList.size(); j++){
         		if(mSimpleOrgList.get(j).getOrgId() == rspOrgId){
         			mComposeOrgSpinn.setSelection(j);
@@ -333,8 +331,7 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
 		// Handle action buttons
 		switch (item.getItemId()) {
 		case R.id.qc_edit_action_submit:
-//			doCommitQuickCheck();
-			__doCommitQuickCheck();
+			doCommitQuickCheck();
 			break;
 		case R.id.qc_edit_action_discard:
 			onProcessItemOptionSelected();
@@ -496,103 +493,29 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
 	public void prepareQuickCheckData(){
 		mIssueDescriptionStr = mIssueDescriptionEditText.getText().toString().trim();
 		mIssueDeadLineStr = deadLinedatePicker.getText().toString().trim();
-		mQuickCheckReqJsonData = new JSONObject();
-	    try {
-	    	mQuickCheckReqJsonData.put(LoginApiConstant.ISSUE_LEVEL, mIssueLevelId);
-	    	mQuickCheckReqJsonData.put(LoginApiConstant.ISSUE_RSP_ORG_ID, mIssueRspOrgIndex);
-	    	mQuickCheckReqJsonData.put(LoginApiConstant.ISSUE_RSP_PERSON_ID, mIssueRspPersonIndex);
-	    	mQuickCheckReqJsonData.put(LoginApiConstant.ISSUE_DEAD_LINE, mIssueDeadLineStr);
-	    	mQuickCheckReqJsonData.put(LoginApiConstant.ISSUE_DESCRIPTION, mIssueDescriptionStr);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		mQuickCheckReqJsonData = new JSONObject();
+		
+		mQuickCheckReqData = new QuickCheckReqData();
+	    //	    	mQuickCheckReqJsonData.put(LoginApiConstant.ISSUE_LEVEL, mIssueLevelId);
+		//	    	mQuickCheckReqJsonData.put(LoginApiConstant.ISSUE_RSP_ORG_ID, mIssueRspOrgIndex);
+		//	    	mQuickCheckReqJsonData.put(LoginApiConstant.ISSUE_RSP_PERSON_ID, mIssueRspPersonIndex);
+		//	    	mQuickCheckReqJsonData.put(LoginApiConstant.ISSUE_DEAD_LINE, mIssueDeadLineStr);
+		//	    	mQuickCheckReqJsonData.put(LoginApiConstant.ISSUE_DESCRIPTION, mIssueDescriptionStr);
+			    	mQuickCheckReqData.setLevel(mIssueLevelId);
+			    	mQuickCheckReqData.setOrganizationId(mIssueRspOrgIndex);
+			    	mQuickCheckReqData.setResponsiblePersonId(mIssueRspPersonIndex);
+			    	mQuickCheckReqData.setDeadline(mIssueDeadLineStr);
+			    	mQuickCheckReqData.setDescription(mIssueDescriptionStr);
+			    	
+			    	if(mImageNeedToDeletedList != null && mImageNeedToDeletedList.size() > 0){
+			    		mQuickCheckReqData.setNeededdeleteImagesId(mImageNeedToDeletedList);
+			    	}
 
-	    Log.i(TAG, "server request for compose quick check : " + mQuickCheckReqJsonData.toString());
+	    Log.i(TAG, "server request for compose quick check : " + mQuickCheckReqData.toString());
 	}
 	
 	public void doCommitQuickCheck(){
-		prepareQuickCheckData();
-		
-		String baseUrl = "http://www.365check.net:8088/check-service/api/v1/";
-		String API = "organizations/" + AccountMngr.getGlobalOrgId() + "/quick_reports";
-		Log.i(TAG, "server request url : " + baseUrl + API);
-		
-		mQuickCheckSubmitJasonObjReq = new JsonObjectRequest(
-				Method.POST,
-				baseUrl + API,
-				mQuickCheckReqJsonData, new Response.Listener<JSONObject>() {
-					@Override
-					public void onResponse(JSONObject response) {
-						Log.d(TAG, "response : " + response.toString());
-
-						QuickCheckRspData qcRspData = gson.fromJson(response.toString(),
-								QuickCheckRspData.class);
-						Log.i(TAG, "server response for compose quick check : " + response.toString());
-						mQuickCheckEditorFragmentListener.OnQuickCheckSubmitSuccess(qcRspData);
-					}
-				}, new Response.ErrorListener() {
-
-					@Override
-					public void onErrorResponse(VolleyError errInfo) {
-						String errorStr = VolleyErrorHelper.getMessage(
-								getActivity(), errInfo);
-						Log.d(TAG, "error response : " + errorStr);
-						
-//						mProgressStatusView.dismiss();
-					}
-				});
-
-		//CloudCheckApplication.getInstance().setCookie();
-		mQueue.add(mQuickCheckSubmitJasonObjReq);		
-	}
-	
-	public void _doCommitQuickCheck(){
-		prepareQuickCheckData();
-		
-		String baseUrl = "http://www.365check.net:8088/check-service/api/v1/";
-		String relativeUrl = "organizations/" + AccountMngr.getGlobalOrgId() + "/quick_reports";
-		Log.i(TAG, "server request url : " + baseUrl + relativeUrl);
-		
-		AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
-
-            @Override
-            public void onStart() {
-
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
-            	String rspStr = new String(response);
-				Log.d(TAG, "quick report submit response : " + rspStr.toString());
-				
-				QuickCheckRspData qcRspData = gson.fromJson(rspStr.toString(),
-						QuickCheckRspData.class);
-				Log.i(TAG, "server response for compose quick check : " + rspStr.toString());
-				mQuickCheckEditorFragmentListener.OnQuickCheckSubmitSuccess(qcRspData);
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers,	byte[] errorResponse, Throwable e) {
-
-            }
-        };
-        CloudCheckApplication.mAsyncHttpClientApi.post(relativeUrl, mQuickCheckReqJsonData.toString(), responseHandler);
-	}
-	
-	public void __doCommitQuickCheck(){
-		prepareQuickCheckData();
-		
-//		File file1 = new File("/mnt/sdcard/checkFileTest/ic_save.jpg");
-//		File file2 = new File("/mnt/sdcard/checkFileTest/ic_refresh.jpg");
-//		
-//		QuickCheckReqFilePartData fileDataItem1 = new QuickCheckReqFilePartData(file1, "image/jpeg");
-//		QuickCheckReqFilePartData fileDataItem2 = new QuickCheckReqFilePartData(file2, "image/jpeg");
-//		
-//		ArrayList<QuickCheckReqFilePartData> fileList = new ArrayList<QuickCheckReqFilePartData>();
-//		
-//		fileList.add(fileDataItem1);
-//		fileList.add(fileDataItem2);
+		prepareQuickCheckData();		
 		
 		ArrayList<QuickCheckReqFilePartData> fileList = new ArrayList<QuickCheckReqFilePartData>();
 		for(int i = 0; i < fileListToAdd.size(); i++){
@@ -602,20 +525,24 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
 			Log.i(TAG, "file item: " + fileListToAdd.get(i).getAbsolutePath());
 		}
 		
-		
-		String baseUrl = "http://www.365check.net:8088/check-service/api/v1/";
-		String relativeUrl = "organizations/" + AccountMngr.getGlobalOrgId() + "/quick_reports";
-		Log.i(TAG, "server request url : " + baseUrl + relativeUrl);
+		String relativeUrl = "";
+		if(mActionMode == ACTION_MODE_NEW_ADDED){
+			relativeUrl = "organizations/" + AccountMngr.getGlobalOrgId() + "/quick_reports";
+		} else if(mActionMode == ACTION_MODE_EDIT_EXIST && mOrigReportId > 0){
+			relativeUrl = "quick_reports/" + mOrigReportId;
+		}
 		
 		AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
 
             @Override
             public void onStart() {
-
+            	showDialog(R.id.dialog_show_progress);
             }
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+            	removeDialog(R.id.dialog_show_progress);
+            	
             	String rspStr = new String(response);
 				Log.d(TAG, "quick report submit response : " + rspStr.toString());
 				
@@ -627,10 +554,14 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
 
             @Override
             public void onFailure(int statusCode, Header[] headers,	byte[] errorResponse, Throwable e) {
-
+            	removeDialog(R.id.dialog_show_progress);
+            	
+            	String errorStr = AsyncHttpExeptionHelper.getMessage(getActivity(), e, errorResponse, statusCode);
+            	CommonHelper.notify(getActivity(), errorStr);
             }
         };
-        CloudCheckApplication.mAsyncHttpClientApi.post(relativeUrl, mQuickCheckReqJsonData.toString(), fileList, responseHandler);
+        String jsonReqStr = gson.toJson(mQuickCheckReqData);
+        CloudCheckApplication.mAsyncHttpClientApi.post(relativeUrl, jsonReqStr, fileList, responseHandler);
 	}	
 
 	@Override
@@ -670,11 +601,11 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
 				fragment = DatePickerDialogFragment.newInstance(dialogId, "选择日期", "");
 				break;
 			}
-//            case R.id.dialog_attachment_progress: {
-//                String message = getString(R.string.dialog_attachment_progress_title);
-//                fragment = ProgressDialogFragment.newInstance(null, message);
-//                break;
-//            }
+            case R.id.dialog_show_progress: {
+                String message = "网络通信中, 请稍等...";
+                fragment = ProgressDialogFragment.newInstance(dialogId, "", message);
+                break;
+            }
             default: {
                 throw new RuntimeException("Called showDialog(int) with unknown dialog id.");
             }
@@ -683,6 +614,28 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
         fragment.setTargetFragment(this, dialogId);
         fragment.show(getFragmentManager(), getDialogTag(dialogId));
     }
+    
+	private void removeDialog(int dialogId) {
+		FragmentManager fm = getFragmentManager();
+
+		if (fm == null || isRemoving() || isDetached()) {
+			return;
+		}
+
+		// Make sure the "show dialog" transaction has been processed when we
+		// call
+		// findFragmentByTag() below. Otherwise the fragment won't be found and
+		// the dialog will
+		// never be dismissed.
+		fm.executePendingTransactions();
+
+		DialogFragment fragment = (DialogFragment) fm
+				.findFragmentByTag(getDialogTag(dialogId));
+
+		if (fragment != null) {
+			fragment.dismiss();
+		}
+	}
 	
     private String getDialogTag(int dialogId) {
         return String.format("dialog-%d", dialogId);
