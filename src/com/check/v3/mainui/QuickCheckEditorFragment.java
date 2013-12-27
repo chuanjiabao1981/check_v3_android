@@ -48,11 +48,13 @@ import com.check.client.R;
 import com.check.v3.AsyncHttpExeptionHelper;
 import com.check.v3.CloudCheckApplication;
 import com.check.v3.CloudCheckApplication.AccountMngr;
+import com.check.v3.api.ApiConstant;
 import com.check.v3.asynchttp.AsyncHttpResponseHandler;
 import com.check.v3.data.ImageItemData;
 import com.check.v3.data.IssueLevel;
+import com.check.v3.data.JsonParamsPart;
 import com.check.v3.data.QuickCheckReqData;
-import com.check.v3.data.QuickCheckReqFilePartData;
+import com.check.v3.data.FilePartData;
 import com.check.v3.data.QuickCheckRspData;
 import com.check.v3.data.SimpleOrganization;
 import com.check.v3.data.User;
@@ -365,10 +367,12 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
 		File file1 = new File("/mnt/sdcard/checkFileTest/ic_save.jpg");
 		File file2 = new File("/mnt/sdcard/checkFileTest/ic_refresh.jpg");
 		
-		QuickCheckReqFilePartData fileDataItem1 = new QuickCheckReqFilePartData(file1, "image/jpeg");
-		QuickCheckReqFilePartData fileDataItem2 = new QuickCheckReqFilePartData(file2, "image/jpeg");
-		
-		ArrayList<QuickCheckReqFilePartData> fileList = new ArrayList<QuickCheckReqFilePartData>();
+		FilePartData fileDataItem1 = new FilePartData(ApiConstant.QUICK_REPORT_FILE_PART_KEY, 
+				ApiConstant.IMAGE_JPEG_CONTENT_TYPE, file1);
+		FilePartData fileDataItem2 = new FilePartData(ApiConstant.QUICK_REPORT_FILE_PART_KEY, 
+				ApiConstant.IMAGE_JPEG_CONTENT_TYPE, file2);
+
+		ArrayList<FilePartData> fileList = new ArrayList<FilePartData>();
 		
 		fileList.add(fileDataItem1);
 		fileList.add(fileDataItem2);
@@ -396,7 +400,11 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
 				Log.d(TAG, "quick report submit error response : " + rspStr.toString());
             }
         };
-        CloudCheckApplication.mAsyncHttpClientApi.post(relativeUrl, jreq.toString(), fileList, responseHandler);
+        
+        JsonParamsPart jsonPart = new JsonParamsPart(ApiConstant.QUICK_REPORT_JSON_PART_KEY, 
+        		ApiConstant.JSON_CONTENT_TYPE, jreq.toString());
+        
+        CloudCheckApplication.mAsyncHttpClientApi.post(relativeUrl, jsonPart, fileList, responseHandler);
 	}
 	
 	private OnItemSelectedListener mIssueLevelSpinnSelectedListener = new OnItemSelectedListener() {
@@ -513,9 +521,10 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
 	public void doCommitQuickCheck(){
 		prepareQuickCheckData();		
 		
-		ArrayList<QuickCheckReqFilePartData> fileList = new ArrayList<QuickCheckReqFilePartData>();
+		ArrayList<FilePartData> fileList = new ArrayList<FilePartData>();
 		for(int i = 0; i < fileListToAdd.size(); i++){
-			QuickCheckReqFilePartData fileDataItem = new QuickCheckReqFilePartData(fileListToAdd.get(i), "image/jpeg");
+			FilePartData fileDataItem = new FilePartData(ApiConstant.QUICK_REPORT_FILE_PART_KEY, 
+					ApiConstant.IMAGE_JPEG_CONTENT_TYPE, fileListToAdd.get(i));
 			fileList.add(fileDataItem);
 			Log.i(TAG, "file item: " + fileListToAdd.get(i).getName() + ", size = " + fileListToAdd.get(i).getTotalSpace());
 			Log.i(TAG, "file item: " + fileListToAdd.get(i).getAbsolutePath());
@@ -556,8 +565,13 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
             	CommonHelper.notify(getActivity(), errorStr);
             }
         };
+        
         String jsonReqStr = gson.toJson(mQuickCheckReqData);
-        CloudCheckApplication.mAsyncHttpClientApi.post(relativeUrl, jsonReqStr, fileList, responseHandler);
+        
+        JsonParamsPart jsonPart = new JsonParamsPart(ApiConstant.QUICK_REPORT_JSON_PART_KEY, 
+        		ApiConstant.JSON_CONTENT_TYPE, jsonReqStr);
+        
+        CloudCheckApplication.mAsyncHttpClientApi.post(relativeUrl, jsonPart, fileList, responseHandler);
 	}	
 
 	@Override

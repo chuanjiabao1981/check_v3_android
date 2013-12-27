@@ -62,7 +62,7 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="#000000" />
                 
-                <com.check.v3.widget.CustomListView
+                <com.check.v3.widget.CustomGridView
 			        android:id="@+id/qr_v_issue_resolution_photo_grid_view"
 			        android:layout_width="match_parent"
 			        android:layout_height="match_parent"

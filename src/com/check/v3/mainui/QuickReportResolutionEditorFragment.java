@@ -2,6 +2,8 @@ package com.check.v3.mainui;
 
 import org.apache.http.Header;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,9 +17,9 @@ import com.actionbarsherlock.view.MenuItem;
 import com.check.client.R;
 import com.check.v3.AsyncHttpExeptionHelper;
 import com.check.v3.CloudCheckApplication;
-import com.check.v3.CloudCheckApplication.AccountMngr;
 import com.check.v3.api.ApiConstant;
 import com.check.v3.asynchttp.AsyncHttpResponseHandler;
+import com.check.v3.data.JsonParamsPart;
 import com.check.v3.data.ReportResolutionReqData;
 import com.check.v3.data.ReportResolutionRspData;
 import com.check.v3.util.CommonHelper;
@@ -26,6 +28,7 @@ import com.google.gson.Gson;
 public class QuickReportResolutionEditorFragment extends SherlockFragment {
 	private static final String TAG = "QuickReportResolutionEditorFragment";
 	
+	private Context mContext;
 	QuickReportResolutionEditorFragmentListener mQuickReportResolutionEditorFragmentListener;
 
 	private int mActionMode = ApiConstant.ACTION_MODE_RSLV_NEW_ADDED;
@@ -68,6 +71,19 @@ public class QuickReportResolutionEditorFragment extends SherlockFragment {
 
 		return rootView;
 	}
+	
+	  @Override
+	  public void onAttach(Activity activity) {
+	      super.onAttach(activity);
+	      
+	      mContext = activity.getApplicationContext();
+	      
+	      try {
+	    	  mQuickReportResolutionEditorFragmentListener = (QuickReportResolutionEditorFragmentListener) activity;
+	      } catch (ClassCastException e) {
+	          throw new ClassCastException(activity.toString() + " must implement QuickReportResolutionEditorFragmentListener");
+	      }
+	  }
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -179,7 +195,11 @@ public class QuickReportResolutionEditorFragment extends SherlockFragment {
             }
         };
         String jsonReqStr = gson.toJson(mQuickReportResolutionReqData);
-        CloudCheckApplication.mAsyncHttpClientApi.post(relativeUrl, jsonReqStr, null, responseHandler);
+        
+        JsonParamsPart jsonPart = new JsonParamsPart(ApiConstant.QUICK_REPORT_RSLV_JSON_PART_KEY, 
+        		ApiConstant.JSON_CONTENT_TYPE, jsonReqStr);
+        
+        CloudCheckApplication.mAsyncHttpClientApi.post(relativeUrl, jsonPart, null, responseHandler);
 	}
 
 	private void doDiscardQuickReportResolution() {

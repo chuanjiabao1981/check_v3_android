@@ -62,7 +62,8 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.SyncBasicHttpContext;
 
-import com.check.v3.data.QuickCheckReqFilePartData;
+import com.check.v3.data.FilePartData;
+import com.check.v3.data.JsonParamsPart;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -784,21 +785,18 @@ public class AsyncHttpClient {
  * Added to support multiple part entity	
  */
 	public RequestHandle post(String url, Header[] headers,
-			String postBodyStr, String contentType, ArrayList<QuickCheckReqFilePartData> fileList,
+			JsonParamsPart jsonPart, ArrayList<FilePartData> fileList,
 			ResponseHandlerInterface responseHandler) {
-		return post(null, url, headers, postBodyStr, contentType, fileList, responseHandler);
+		return post(null, url, headers, jsonPart, fileList, responseHandler);
 	}
 	
 	public RequestHandle post(Context context, String url, Header[] headers,
-			String postBodyStr, String contentType, ArrayList<QuickCheckReqFilePartData> fileList,
+			JsonParamsPart postBodyStr, ArrayList<FilePartData> fileList,
 			ResponseHandlerInterface responseHandler) {
 		HttpEntity entity = null;
-		if(contentType == null){
-			contentType = DEFAULT_CONTENT_TYPE;
-		}
 		
 		try {
-			entity = createCheckMultipartEntity(postBodyStr, contentType, fileList, responseHandler);
+			entity = createCheckMultipartEntity(postBodyStr, fileList, responseHandler);
 		} catch (IOException e) {
 			if (responseHandler != null){
                 responseHandler.sendFailureMessage(0, null, null, e);
@@ -817,23 +815,24 @@ public class AsyncHttpClient {
 				responseHandler, context);
 	}
 	
-	private HttpEntity createCheckMultipartEntity(String jsonStrPartBody, String contentType,
-			ArrayList<QuickCheckReqFilePartData> fileList,
+	private HttpEntity createCheckMultipartEntity(JsonParamsPart jsonPartBody,
+			ArrayList<FilePartData> fileList,
 			ResponseHandlerInterface progressHandler) throws IOException {
 		SimpleMultipartEntity entity = new SimpleMultipartEntity(
 				progressHandler);
 		entity.setIsRepeatable(false);
 
 		// Add string params as json type
-		if(jsonStrPartBody != null){
-			entity.addPart("quickReportJson", jsonStrPartBody, contentType);
+		if(jsonPartBody != null){
+			entity.addPart(jsonPartBody.getContentKey(), jsonPartBody.getContentBody(), jsonPartBody.getContentType());
 		}
 
 		// Add file params
 		if(fileList != null){
 			for (int i = 0; i < fileList.size(); i++) {
-				entity.addPart("quickReportImages", fileList.get(i).getFile(),
-						fileList.get(i).getContentType());
+				FilePartData fileItem = fileList.get(i);
+				entity.addPart(fileItem.getContentKey(), fileItem.getFile(),
+						fileItem.getContentType());
 			}
 		}
 

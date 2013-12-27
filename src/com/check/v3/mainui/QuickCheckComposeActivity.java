@@ -147,7 +147,7 @@ public class QuickCheckComposeActivity extends SherlockFragmentActivity implemen
 	@Override
 	public void onSubmitQuickReportResolutionSuccess(
 			Bundle qrRslvRspData) {
-		QuickReportResolutionEditorFragment newFragment = QuickReportResolutionEditorFragment.newInstance(qrRslvRspData);
+		QuickReportResolutionViewerFragment newFragment = QuickReportResolutionViewerFragment.newInstance(qrRslvRspData);
 
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 

@@ -3,7 +3,7 @@ package com.check.v3.data;
 import java.io.File;
 import java.io.Serializable;
 
-public class QuickCheckReqFilePartData implements Serializable {
+public class FilePartData implements Serializable {
 
 	/**
 	 * 
@@ -11,13 +11,15 @@ public class QuickCheckReqFilePartData implements Serializable {
 	private static final long serialVersionUID = -5185577560573211154L;
 
 
-	public File file;
-    public String contentType;
+	private File file;
+	private String contentType;
+    private String contentKey;
 
-	public QuickCheckReqFilePartData(File file, String contentType) {
+	public FilePartData(String contentKey, String contentType, File file) {
 		super();
 		this.file = file;
 		this.contentType = contentType;
+		this.contentKey = contentKey;
 	}
 
 	public File getFile() {
@@ -34,6 +36,14 @@ public class QuickCheckReqFilePartData implements Serializable {
 	
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
+	}
+
+	public String getContentKey() {
+		return contentKey;
+	}
+
+	public void setContentKey(String contentKey) {
+		this.contentKey = contentKey;
 	}
     
     

@@ -26,4 +26,13 @@ public class ApiConstant
   public static final int ACTION_MODE_VIEW_RSLV_FROM_SUBMIT_RSP = 12;
   
   public static final String KEY_QUICK_CHECK_VIEW_PHOTO_URL_LIST = "qc_view_photo_url_list";
+  
+  public static final String QUICK_REPORT_JSON_PART_KEY = "quickReportJson";
+  public static final String QUICK_REPORT_FILE_PART_KEY = "quickReportImages";
+  
+  public static final String QUICK_REPORT_RSLV_JSON_PART_KEY = "quickReportResolveJson";
+  public static final String QUICK_REPORT_RSLV_FILE_PART_KEY = "quickReportResolveImages";
+  
+  public static final String JSON_CONTENT_TYPE = "application/json";
+  public static final String IMAGE_JPEG_CONTENT_TYPE = "image/jpeg";
 }
