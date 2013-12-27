@@ -15,5 +15,15 @@ public class ApiConstant
   public static final int QUICK_CHECK_EDIT_EXIST_ACTION = 2;
   public static final int QUICK_CHECK_VIEW_ACTION = 3;
   
+  public static final String ORIG_REPORT_ID = "orig_report_id";
+  public static final String ORIG_RESOLUTION_ID = "orig_resolution_id";
+  public static final String ORIG_RESOLUTION_DATA = "orig_resolution_data";
+  public static final String WHAT_ACTION = "what_action";
+  public static final int ACTION_MODE_RSLV_NEW_ADDED = 1;
+  public static final int ACTION_MODE_RSLV_EDIT_EXIST = 2;
+  
+  public static final int ACTION_MODE_VIEW_RSLV_FROM_LIST = 11;
+  public static final int ACTION_MODE_VIEW_RSLV_FROM_SUBMIT_RSP = 12;
+  
   public static final String KEY_QUICK_CHECK_VIEW_PHOTO_URL_LIST = "qc_view_photo_url_list";
 }

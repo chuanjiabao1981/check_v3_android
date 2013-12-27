@@ -6,8 +6,11 @@ import com.check.client.R;
 import com.check.v3.api.ApiConstant;
 import com.check.v3.data.QuickCheckListItemData;
 import com.check.v3.data.QuickCheckRspData;
+import com.check.v3.data.ReportResolutionRspData;
 import com.check.v3.mainui.QuickCheckEditorFragment.QuickCheckEditorFragmentListener;
 import com.check.v3.mainui.QuickCheckViewerFragment.QuickCheckViewerFragmentListener;
+import com.check.v3.mainui.QuickReportResolutionEditorFragment.QuickReportResolutionEditorFragmentListener;
+import com.check.v3.mainui.QuickReportResolutionViewerFragment.QuickReportResolutionViewerFragmentListener;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +18,8 @@ import android.support.v4.app.FragmentTransaction;
 
 
 public class QuickCheckComposeActivity extends SherlockFragmentActivity implements QuickCheckEditorFragmentListener,
-				QuickCheckViewerFragmentListener {
+				QuickCheckViewerFragmentListener, QuickReportResolutionViewerFragmentListener,
+				QuickReportResolutionEditorFragmentListener {
 	private static final String TAG = "QuickCheckComposeActivity";
 	private int mQuickCheckAction = ApiConstant.QUICK_CHECK_EDIT_NEW_ACTION;
 	
@@ -68,7 +72,7 @@ public class QuickCheckComposeActivity extends SherlockFragmentActivity implemen
 
 
 	@Override
-	public void OnProcessItemSelected() {
+	public void onProcessItemSelected() {
 //		QuickCheckViewerFragment newFragment = new QuickCheckViewerFragment();
 //		Bundle args = new Bundle();
 //
@@ -83,7 +87,7 @@ public class QuickCheckComposeActivity extends SherlockFragmentActivity implemen
 
 
 	@Override
-	public void OnQuickCheckSubmitSuccess(QuickCheckRspData qcRspData) {
+	public void onQuickCheckSubmitSuccess(QuickCheckRspData qcRspData) {
 		QuickCheckViewerFragment newFragment = QuickCheckViewerFragment.newInstance(qcRspData);
 
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -95,7 +99,7 @@ public class QuickCheckComposeActivity extends SherlockFragmentActivity implemen
 	}
 
 	@Override
-	public void OnQuickCheckEditMenuItemClicked(QuickCheckRspData qcRspData) {
+	public void onQuickCheckEditMenuItemClicked(QuickCheckRspData qcRspData) {
 		QuickCheckEditorFragment newFragment = QuickCheckEditorFragment.newInstance(qcRspData);
 
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -107,8 +111,49 @@ public class QuickCheckComposeActivity extends SherlockFragmentActivity implemen
 	}
 
 	@Override
-	public void OnQuickCheckProcessMenuItemClicked() {
+	public void onQuickCheckResolveMenuItemClicked(Bundle qrRslvData) {
+		QuickReportResolutionEditorFragment newFragment = QuickReportResolutionEditorFragment.newInstance(qrRslvData);
+
+		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+		transaction.replace(R.id.quick_check_compose_activity_container, newFragment);
+		transaction.addToBackStack(null);
+
+		transaction.commit();
+		
+	}
+
+	@Override
+	public void onQuickReportResolutionEditMenuItemClicked(
+			Bundle qrRslvRspData) {
+		QuickReportResolutionEditorFragment newFragment = QuickReportResolutionEditorFragment.newInstance(qrRslvRspData);
+
+		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+		transaction.replace(R.id.quick_check_compose_activity_container, newFragment);
+		transaction.addToBackStack(null);
+
+		transaction.commit();
+		
+	}
+
+
+	@Override
+	public void onDiscardQuickReportResolution() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void onSubmitQuickReportResolutionSuccess(
+			Bundle qrRslvRspData) {
+		QuickReportResolutionEditorFragment newFragment = QuickReportResolutionEditorFragment.newInstance(qrRslvRspData);
+
+		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+		transaction.replace(R.id.quick_check_compose_activity_container, newFragment);
+		transaction.addToBackStack(null);
+
+		transaction.commit();
 	}
 	}

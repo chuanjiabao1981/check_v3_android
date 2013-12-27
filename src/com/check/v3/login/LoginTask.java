@@ -87,8 +87,11 @@ public class LoginTask{
 
             @Override
             public void onFailure(int statusCode, Header[] headers,	byte[] errorResponse, Throwable e) {
-            	mProgressStatusView.dismiss();           
-            	String errStr = new String(errorResponse);
+            	mProgressStatusView.dismiss();  
+            	String errStr = "";
+            	if(errorResponse != null){
+            		errStr = new String(errorResponse);
+            	}
             	
             	String errorStr = AsyncHttpExeptionHelper.getMessage(mActivity.getApplicationContext(), e, errorResponse, statusCode);
             	CommonHelper.notify(mActivity, errorStr);

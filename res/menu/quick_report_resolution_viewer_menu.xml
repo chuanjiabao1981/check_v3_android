@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/rlsv_viewer_action_edit"
+        android:icon="@drawable/ic_compose"
+        android:showAsAction="always|withText"
+        android:title="编辑"/>
+
+</menu>

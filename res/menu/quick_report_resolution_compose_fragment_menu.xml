@@ -15,12 +15,12 @@
   -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/action_save"
+    <item android:id="@+id/rslv_action_submit"
           android:icon="@drawable/ic_menu_save"
           android:title="提交"
           android:showAsAction="ifRoom|withText" />
     
-        <item android:id="@+id/action_discard"
+        <item android:id="@+id/rslv_action_discard"
           android:icon="@drawable/ic_menu_discard"
           android:title="取消"
           android:showAsAction="ifRoom|withText" />

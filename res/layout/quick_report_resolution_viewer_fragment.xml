@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/quick_report_resolution_viewer_fragment_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dip"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/qr_v_issue_resolution_dscp_container"
+                style="@style/custom_qc_viewer_item_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dip" >
+
+                <TextView
+                    android:id="@+id/qr_v_issue_resolution_dscp_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="解决方案描述:"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#000000" />
+
+                <TextView
+                    android:id="@+id/qr_v_issue_resolution_dscp_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="5dip"
+                    android:text=""
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#000000" />
+            </LinearLayout>
+            
+            <LinearLayout
+                android:id="@+id/qr_v_issue_resolution_photo_container"
+                style="@style/custom_qc_viewer_item_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dip"
+                android:orientation="vertical"
+                android:padding="5dip" 
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/qr_v_issue_resolution_photo_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="解决方案图片"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#000000" />
+                
+                <com.check.v3.widget.CustomListView
+			        android:id="@+id/qr_v_issue_resolution_photo_grid_view"
+			        android:layout_width="match_parent"
+			        android:layout_height="match_parent"
+			        android:cacheColorHint="@android:color/transparent"
+			        android:fadingEdgeLength="0dp" />
+
+         </LinearLayout>
+        </LinearLayout>              
+    </ScrollView>
+
+</FrameLayout>

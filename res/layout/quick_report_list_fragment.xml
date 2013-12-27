@@ -36,11 +36,11 @@
             android:layout_height="match_parent"
             android:gravity="center" />
 
-		    <com.check.v3.widget.CustomPushToRefreshListView
-		        android:id="@+id/quick_report_list_view"
-		        android:layout_width="match_parent"
-		        android:layout_height="match_parent"
-		        android:cacheColorHint="@android:color/transparent"
-		        android:fadingEdgeLength="0dp" />
+		<com.check.v3.widget.CustomPushToRefreshListView
+	        android:id="@+id/quick_report_list_view"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:cacheColorHint="@android:color/transparent"
+	        android:fadingEdgeLength="0dp" />
     </FrameLayout>
 </FrameLayout>

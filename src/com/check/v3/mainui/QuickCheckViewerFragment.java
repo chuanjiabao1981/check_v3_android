@@ -13,6 +13,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.check.client.R;
+import com.check.v3.api.ApiConstant;
 import com.check.v3.data.QuickCheckRspData;
 import com.check.v3.mainui.QuickCheckEditorFragment.QuickCheckEditorFragmentListener;
 import com.check.v3.widget.CustomGridView;
@@ -30,7 +31,6 @@ public class QuickCheckViewerFragment extends SherlockFragment {
 	private TextView mIssueRspOrgTextView;
 	private TextView mIssueRspPersonTextView;
 	private CustomGridView mIssuePhotoViewerGridView;
-	private ImageViewerSimpleAdapter mImageViewerSimpleAdapter;
 	private PhotoGridViewSimpleAdapter mPhotoGridViewSimpleAdapter;
 	
 	QuickCheckRspData qcData;
@@ -78,7 +78,7 @@ public class QuickCheckViewerFragment extends SherlockFragment {
 	      try {
 	    	  mQuickCheckViewerFragmentListener = (QuickCheckViewerFragmentListener) activity;
 	      } catch (ClassCastException e) {
-	          throw new ClassCastException(activity.toString() + " must implement mQuickCheckViewerFragmentListener");
+	          throw new ClassCastException(activity.toString() + " must implement QuickCheckViewerFragmentListener");
 	      }
 	  }
 	
@@ -108,7 +108,9 @@ public class QuickCheckViewerFragment extends SherlockFragment {
   		switch (item.getItemId()) {
   		case R.id.qc_view_action_edit:
   			doEditQuickCheckItem();
-  			break;		
+  			break;
+  		case R.id.qc_view_action_process:
+  			doResolveQuickReportIssue();
   		default:
   			Toast.makeText(this.getActivity(),
   					"Menu item " + item.getTitle() + " is selected.",
@@ -120,8 +122,8 @@ public class QuickCheckViewerFragment extends SherlockFragment {
   	
 	// Container Activity must implement this interface
     public interface QuickCheckViewerFragmentListener {
-    	public void OnQuickCheckEditMenuItemClicked(QuickCheckRspData qcRspData);
-        public void OnQuickCheckProcessMenuItemClicked();
+    	public void onQuickCheckEditMenuItemClicked(QuickCheckRspData qcRspData);
+        public void onQuickCheckResolveMenuItemClicked(Bundle qrRslvDataBundle);
     }
     
     private void displayQuickCheck(final QuickCheckRspData data){
@@ -133,10 +135,7 @@ public class QuickCheckViewerFragment extends SherlockFragment {
     	mIssueRspOrgTextView.setText(data.getOrganizationName());
     	mIssueRspPersonTextView.setText(data.getResponsiblePersonName());
     	    	
-    	if(data.getImages() != null && data.getImages().size() > 0){
-//    		mImageViewerSimpleAdapter = new ImageViewerSimpleAdapter(getActivity(), data.getImages());
-//    		mIssuePhotoViewerGridView.setAdapter(mImageViewerSimpleAdapter);
-    		
+    	if(data.getImages() != null && data.getImages().size() > 0){    		
     		mPhotoGridViewSimpleAdapter = new PhotoGridViewSimpleAdapter(getActivity(), data.getImages(), false);
     		mIssuePhotoViewerGridView.setAdapter(mPhotoGridViewSimpleAdapter);
     	}
@@ -144,7 +143,16 @@ public class QuickCheckViewerFragment extends SherlockFragment {
     
     private void doEditQuickCheckItem(){
     	if(qcData != null){
-    		mQuickCheckViewerFragmentListener.OnQuickCheckEditMenuItemClicked(qcData);
+    		mQuickCheckViewerFragmentListener.onQuickCheckEditMenuItemClicked(qcData);
+    	}
+    }
+    
+    private void doResolveQuickReportIssue(){
+    	if(qcData != null){
+    		Bundle qrRslvData = new Bundle();
+    		qrRslvData.putInt(ApiConstant.ORIG_REPORT_ID, qcData.getId());
+    		qrRslvData.putInt(ApiConstant.WHAT_ACTION, ApiConstant.ACTION_MODE_RSLV_NEW_ADDED);
+    		mQuickCheckViewerFragmentListener.onQuickCheckResolveMenuItemClicked(qrRslvData);
     	}
     }
 	

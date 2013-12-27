@@ -25,6 +25,7 @@ import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -193,6 +194,7 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
 				showDialog(R.id.dialog_date_picker);
 			}
 		});
+		deadLinedatePicker.setInputType(InputType.TYPE_NULL);
 
 		btn.setOnClickListener(this);
 
@@ -481,35 +483,29 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
 	};
 	
 	private void onProcessItemOptionSelected(){
-		mQuickCheckEditorFragmentListener.OnProcessItemSelected();
+		mQuickCheckEditorFragmentListener.onProcessItemSelected();
 	}
 	
 	// Container Activity must implement this interface
     public interface QuickCheckEditorFragmentListener {
-    	public void OnQuickCheckSubmitSuccess(QuickCheckRspData qcRspData);
-        public void OnProcessItemSelected();
+    	public void onQuickCheckSubmitSuccess(QuickCheckRspData qcRspData);
+        public void onProcessItemSelected();
     }
     
 	public void prepareQuickCheckData(){
 		mIssueDescriptionStr = mIssueDescriptionEditText.getText().toString().trim();
 		mIssueDeadLineStr = deadLinedatePicker.getText().toString().trim();
-//		mQuickCheckReqJsonData = new JSONObject();
 		
 		mQuickCheckReqData = new QuickCheckReqData();
-	    //	    	mQuickCheckReqJsonData.put(LoginApiConstant.ISSUE_LEVEL, mIssueLevelId);
-		//	    	mQuickCheckReqJsonData.put(LoginApiConstant.ISSUE_RSP_ORG_ID, mIssueRspOrgIndex);
-		//	    	mQuickCheckReqJsonData.put(LoginApiConstant.ISSUE_RSP_PERSON_ID, mIssueRspPersonIndex);
-		//	    	mQuickCheckReqJsonData.put(LoginApiConstant.ISSUE_DEAD_LINE, mIssueDeadLineStr);
-		//	    	mQuickCheckReqJsonData.put(LoginApiConstant.ISSUE_DESCRIPTION, mIssueDescriptionStr);
-			    	mQuickCheckReqData.setLevel(mIssueLevelId);
-			    	mQuickCheckReqData.setOrganizationId(mIssueRspOrgIndex);
-			    	mQuickCheckReqData.setResponsiblePersonId(mIssueRspPersonIndex);
-			    	mQuickCheckReqData.setDeadline(mIssueDeadLineStr);
-			    	mQuickCheckReqData.setDescription(mIssueDescriptionStr);
-			    	
-			    	if(mImageNeedToDeletedList != null && mImageNeedToDeletedList.size() > 0){
-			    		mQuickCheckReqData.setNeededdeleteImagesId(mImageNeedToDeletedList);
-			    	}
+		mQuickCheckReqData.setLevel(mIssueLevelId);
+		mQuickCheckReqData.setOrganizationId(mIssueRspOrgIndex);
+		mQuickCheckReqData.setResponsiblePersonId(mIssueRspPersonIndex);
+		mQuickCheckReqData.setDeadline(mIssueDeadLineStr);
+		mQuickCheckReqData.setDescription(mIssueDescriptionStr);
+		
+		if(mImageNeedToDeletedList != null && mImageNeedToDeletedList.size() > 0){
+			mQuickCheckReqData.setNeededdeleteImagesId(mImageNeedToDeletedList);
+		}
 
 	    Log.i(TAG, "server request for compose quick check : " + mQuickCheckReqData.toString());
 	}
@@ -549,7 +545,7 @@ public class QuickCheckEditorFragment extends SherlockFragment implements Custom
 				QuickCheckRspData qcRspData = gson.fromJson(rspStr.toString(),
 						QuickCheckRspData.class);
 				Log.i(TAG, "server response for compose quick check : " + rspStr.toString());
-				mQuickCheckEditorFragmentListener.OnQuickCheckSubmitSuccess(qcRspData);
+				mQuickCheckEditorFragmentListener.onQuickCheckSubmitSuccess(qcRspData);
             }
 
             @Override

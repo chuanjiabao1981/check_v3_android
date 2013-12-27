@@ -222,7 +222,34 @@
                 android:stretchMode="columnWidth"
                 android:verticalSpacing="10dp" >
             </com.check.v3.widget.CustomGridView>
-        </LinearLayout>
+            
+            <LinearLayout
+                android:id="@+id/qc_v_issue_resolve_container"
+                style="@style/custom_qc_viewer_item_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dip"
+                android:orientation="vertical"
+                android:padding="5dip" >
+
+                <TextView
+                    android:id="@+id/qc_v_issue_resolve_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="解决方案"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#000000" />
+                
+                <com.check.v3.widget.CustomListView
+			        android:id="@+id/quick_report_resolve_list_view"
+			        android:layout_width="match_parent"
+			        android:layout_height="match_parent"
+			        android:cacheColorHint="@android:color/transparent"
+			        android:fadingEdgeLength="0dp" />
+
+         </LinearLayout>
+        </LinearLayout>              
     </ScrollView>
 
 </FrameLayout>

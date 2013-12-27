@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/quick_report_resolution_editor_fragment_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="15dip"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            
+            <TextView
+               android:id="@+id/qr_issue_resolution_dscp_title"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:layout_gravity="center_vertical"
+               android:text="方案描述"
+               android:textAppearance="?android:attr/textAppearanceMedium"
+               android:textColor="#000000" />
+            
+			<EditText 
+			    android:id="@+id/qr_issue_resolution_dscp_edit"
+			    style="@style/custom_edittext_style"
+			    android:layout_width="match_parent"			    
+				android:layout_height="90dip"
+				android:padding="5dip"
+				android:textSize="18dp" 
+				android:imeOptions="actionSend|flagNoEnterAction"
+				android:gravity="top" />
+						                
+            <Button
+                android:id="@+id/qr_issue_resolution_add_pic_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dip"
+                android:layout_marginBottom="10dip"
+                android:text="添加图片"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#000000" />
+
+            <com.check.v3.widget.CustomGridView
+                android:id="@+id/qr_issue_resolution_editor_photo_list"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:columnWidth="90dp"
+                android:gravity="center"
+                android:horizontalSpacing="10dp"
+                android:numColumns="auto_fit"
+                android:stretchMode="columnWidth"
+                android:verticalSpacing="10dp" >
+            </com.check.v3.widget.CustomGridView>
+            
+            <LinearLayout
+                android:id="@+id/qr_issue_resolution_container"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical" 
+	            android:visibility="gone" >
+		            <TextView
+		                android:id="@+id/qr_issue_resolution_title"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:layout_gravity="center_vertical"
+		                android:text="原解决方案图片"
+		                android:textAppearance="?android:attr/textAppearanceMedium"
+		                android:textColor="#000000" />
+		            
+					<com.check.v3.widget.CustomGridView
+		                android:id="@+id/qr_issue_resolution_editor_delete_photo_list"
+		                android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:columnWidth="90dp"
+		                android:gravity="center"
+		                android:horizontalSpacing="10dp"
+		                android:numColumns="auto_fit"
+		                android:stretchMode="columnWidth"
+		                android:verticalSpacing="10dp" >
+		            </com.check.v3.widget.CustomGridView> 
+	      </LinearLayout>                 
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>
