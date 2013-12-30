@@ -29,6 +29,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.sherlock.navigationdrawer.compat.SherlockActionBarDrawerToggle;
 import com.check.client.R;
 import com.check.v3.CloudCheckApplication.AccountMngr;
+import com.check.v3.api.ApiConstant;
 import com.check.v3.data.Session;
 
 import android.support.v4.app.FragmentManager;
@@ -282,11 +283,10 @@ public class MainActivity extends SherlockFragmentActivity {
 //    		transaction.replace(R.id.content_frame, fragment);
     		
     	}else if(drawerListItemNames[position].equals(COMPOSE_QUICK_REPORT_ITEM)){
-//    		fragment = new RandomCheckComposeFragment();
-//    		fragment.setArguments(args);
-//    		transaction.replace(R.id.content_frame, fragment);
-    		Intent localIntent = new Intent(this, QuickCheckComposeActivity.class);
-			startActivity(localIntent);
+    		Intent intent = new Intent(this, QuickCheckComposeActivity.class);
+    		Bundle data = new Bundle();
+    		data.putInt(ApiConstant.WHAT_ACTION, ApiConstant.QUICK_CHECK_EDIT_NEW_ACTION);
+			startActivity(intent);
 			
 			mDrawerList.setItemChecked(position, true);
 	        setTitle(mDrawerItemsHashMap.get(drawerListItemNames[position]));

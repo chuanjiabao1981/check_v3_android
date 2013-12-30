@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.check.client.R;
+import com.check.v3.data.PhotoInfoData;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -16,30 +17,30 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 
-public class AttachmentSimpleAdapter extends BaseAdapter {
+public class InsertPhotoGridViewSimpleAdapter extends BaseAdapter {
 	private Context context;
 	
 	private AttachmentDeleteHandler mDeleteHandler;
 
 	private LayoutInflater layoutInflater;
 
-	private ArrayList<HashMap<String, Object>> list;
+	private ArrayList<PhotoInfoData> mPhotoList;
 
-	public AttachmentSimpleAdapter(Context context,
-			ArrayList<HashMap<String, Object>> lstImageItem) {
+	public InsertPhotoGridViewSimpleAdapter(Context context,
+			ArrayList<PhotoInfoData> photoList) {
 		this.context = context;
 
 		layoutInflater = LayoutInflater.from(context);
 
-		this.list = lstImageItem;
+		this.mPhotoList = photoList;
 	}
 
 	public int getCount() {
-		return this.list != null ? this.list.size() : 0;
+		return this.mPhotoList != null ? this.mPhotoList.size() : 0;
 	}
 
 	public Object getItem(int position) {
-		return this.list.get(position);
+		return this.mPhotoList.get(position);
 	}
 
 	public long getItemId(int position) {
@@ -53,7 +54,7 @@ public class AttachmentSimpleAdapter extends BaseAdapter {
 		}
 
 		ImageView preview = (ImageView) convertView.findViewById(R.id.preview);
-		Bitmap thumbNail = (Bitmap) list.get(position).get("ItemImage");
+		Bitmap thumbNail = (Bitmap) mPhotoList.get(position).getPhotoBitmap();
 		preview.setImageBitmap(thumbNail);
 		
 		Button removeBtn = (Button) convertView.findViewById(R.id.delete_preview_btn);

@@ -20,13 +20,14 @@ public class QuickCheckListItemData implements Serializable {
 	private String level;
 	private String state;
 	private String description;
+	private int resolveNum;
 	private ArrayList<ImageItemData> images;
 	
 	public QuickCheckListItemData(int id, int submitterId,
 			String submitterName, int responsiblePeronId,
 			String responsiblePersonName, int organizationId,
 			String organizationName, String deadline, String level,
-			String state, String description, ArrayList<ImageItemData> images) {
+			String state, String description, int resolveNum, ArrayList<ImageItemData> images) {
 		super();
 		this.id = id;
 		this.submitterId = submitterId;
@@ -39,6 +40,7 @@ public class QuickCheckListItemData implements Serializable {
 		this.level = level;
 		this.state = state;
 		this.description = description;
+		this.setResolveNum(resolveNum);
 		this.images = images;
 	}
 
@@ -129,6 +131,14 @@ public class QuickCheckListItemData implements Serializable {
 		this.description = description;
 	}
 	
+	public int getResolveNum() {
+		return resolveNum;
+	}
+
+	public void setResolveNum(int resolveNum) {
+		this.resolveNum = resolveNum;
+	}
+	
 	public ArrayList<ImageItemData> getImages() {
 		return images;
 	}
@@ -136,4 +146,5 @@ public class QuickCheckListItemData implements Serializable {
 	public void setImages(ArrayList<ImageItemData> images) {
 		this.images = images;
 	}
+
 }

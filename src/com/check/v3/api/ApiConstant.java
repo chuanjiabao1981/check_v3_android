@@ -14,6 +14,8 @@ public class ApiConstant
   public static final int QUICK_CHECK_EDIT_NEW_ACTION = 1;
   public static final int QUICK_CHECK_EDIT_EXIST_ACTION = 2;
   public static final int QUICK_CHECK_VIEW_ACTION = 3;
+  public static final int QUICK_CHECK_VIEW_RSP_ACTION = 4;
+  
   
   public static final String ORIG_REPORT_ID = "orig_report_id";
   public static final String ORIG_RESOLUTION_ID = "orig_resolution_id";

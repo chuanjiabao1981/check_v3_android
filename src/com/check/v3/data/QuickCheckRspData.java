@@ -10,20 +10,6 @@ public class QuickCheckRspData implements Serializable {
 	 */
 	private static final long serialVersionUID = 273265606371042886L;
 
-	// {
-	// "id": 175,
-	// "submitterId": 858,
-	// "submitterName": "ceshi_002",
-	// "responsiblePeronId": 868,
-	// "responsiblePersonName": "ceshi_003",
-	// "organizationId": 579,
-	// "organizationName": "tt2",
-	// "deadline": "2012-03-12",
-	// "level": "HIGH",
-	// "state": "OPENED",
-	// "description": "1111111111"
-	// }
-
 	private int id;
 	private int submitterId;
 	private String submitterName;
@@ -123,7 +109,7 @@ public class QuickCheckRspData implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
+	}	
 	
 	public ArrayList<ImageItemData> getImages() {
 		return images;
@@ -131,17 +117,6 @@ public class QuickCheckRspData implements Serializable {
 
 	public void setImages(ArrayList<ImageItemData> images) {
 		this.images = images;
-	}
-
-	@Override
-	public String toString() {
-		return "QuickCheckRspData [id=" + id + ", submitterId=" + submitterId
-				+ ", submitterName=" + submitterName + ", responsiblePeronId="
-				+ responsiblePeronId + ", responsiblePersonName="
-				+ responsiblePersonName + ", organizationId=" + organizationId
-				+ ", organizationName=" + organizationName + ", deadline="
-				+ deadline + ", level=" + level + ", state=" + state
-				+ ", description=" + description + "]";
 	}
 
 }

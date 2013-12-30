@@ -170,14 +170,11 @@ public class QuickReportListFragment extends SherlockFragment implements
 					int position, long id) {
 				// 此处传回来的position和mAdapter.getItemId()获取的一致;
 				Log.d(TAG, "click position:" + position);
-				Toast.makeText(
-						getActivity(),
-						"You have selected " + position
-								+ " in list fragment.", Toast.LENGTH_SHORT).show();
+
 				QuickCheckListItemData selectedListItemData = (QuickCheckListItemData) parent.getItemAtPosition(position);
 				
 				Intent intent = new Intent(getActivity(), QuickCheckComposeActivity.class);
-				intent.putExtra(ApiConstant.KEY_QUICK_CHECK_ACTION, ApiConstant.QUICK_CHECK_VIEW_ACTION);
+				intent.putExtra(ApiConstant.WHAT_ACTION, ApiConstant.QUICK_CHECK_VIEW_ACTION);
 				intent.putExtra(ApiConstant.KEY_QUICK_CHECK_DATA, selectedListItemData);
 				startActivity(intent);
 
@@ -365,7 +362,7 @@ public class QuickReportListFragment extends SherlockFragment implements
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater = ((SherlockFragmentActivity) getActivity())
 				.getSupportMenuInflater();
-		inflater.inflate(R.menu.random_check_list_fragment_menu, menu);
+		inflater.inflate(R.menu.quick_report_list_fragment_menu, menu);
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 

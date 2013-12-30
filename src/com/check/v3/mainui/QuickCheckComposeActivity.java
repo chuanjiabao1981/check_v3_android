@@ -11,6 +11,7 @@ import com.check.v3.mainui.QuickCheckEditorFragment.QuickCheckEditorFragmentList
 import com.check.v3.mainui.QuickCheckViewerFragment.QuickCheckViewerFragmentListener;
 import com.check.v3.mainui.QuickReportResolutionEditorFragment.QuickReportResolutionEditorFragmentListener;
 import com.check.v3.mainui.QuickReportResolutionViewerFragment.QuickReportResolutionViewerFragmentListener;
+import com.check.v3.util.CommonHelper;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,46 +30,41 @@ public class QuickCheckComposeActivity extends SherlockFragmentActivity implemen
         setContentView(R.layout.quick_check_compose_activity_layout);
 	    
         Intent intent = getIntent();
-        if (intent.hasExtra(ApiConstant.KEY_QUICK_CHECK_ACTION)) {
-        	mQuickCheckAction = intent.getIntExtra(ApiConstant.KEY_QUICK_CHECK_ACTION, ApiConstant.QUICK_CHECK_EDIT_NEW_ACTION);
+        if (intent.hasExtra(ApiConstant.WHAT_ACTION)) {
+        	mQuickCheckAction = intent.getIntExtra(ApiConstant.WHAT_ACTION, ApiConstant.QUICK_CHECK_EDIT_NEW_ACTION);
         }
         
         SherlockFragment firstFragment;
+        Bundle origData = new Bundle();
         if(mQuickCheckAction == ApiConstant.QUICK_CHECK_EDIT_NEW_ACTION){
-        	firstFragment = new QuickCheckEditorFragment();
-        	firstFragment.setArguments(getIntent().getExtras());
+        	origData.putInt(ApiConstant.WHAT_ACTION, ApiConstant.QUICK_CHECK_EDIT_NEW_ACTION);
+        	firstFragment = QuickCheckEditorFragment.newInstance(origData);
         	
         	getSupportFragmentManager().beginTransaction()
             .add(R.id.quick_check_compose_activity_container, firstFragment).commit();
         } else if(mQuickCheckAction == ApiConstant.QUICK_CHECK_VIEW_ACTION){
         	QuickCheckListItemData qcListItemData = (QuickCheckListItemData) intent.getSerializableExtra(ApiConstant.KEY_QUICK_CHECK_DATA);
         	
-        	QuickCheckRspData qcReportData = convertQuickCheckListItemData2RspData(qcListItemData);
+        	QuickCheckRspData qcReportData = CommonHelper.convertQuickCheckListItemData2RspData(qcListItemData);
+        	origData.putInt(ApiConstant.WHAT_ACTION, ApiConstant.QUICK_CHECK_VIEW_ACTION);
+        	origData.putInt(ApiConstant.ORIG_REPORT_ID, qcReportData.getId());
+        	origData.putSerializable(ApiConstant.KEY_QUICK_CHECK_DATA, qcReportData);
+        	SherlockFragment targetFragment = QuickCheckViewerFragment.newInstance(origData);
         	
-        	SherlockFragment targetFragment = QuickCheckViewerFragment.newInstance(qcReportData);
+        	getSupportFragmentManager().beginTransaction()
+            .add(R.id.quick_check_compose_activity_container, targetFragment).commit();
+        }else if(mQuickCheckAction == ApiConstant.QUICK_CHECK_VIEW_RSP_ACTION){
+        	QuickCheckRspData qrRspData = (QuickCheckRspData) intent.getSerializableExtra(ApiConstant.KEY_QUICK_CHECK_DATA);
+
+        	origData.putInt(ApiConstant.WHAT_ACTION, ApiConstant.QUICK_CHECK_VIEW_RSP_ACTION);
+        	origData.putSerializable(ApiConstant.KEY_QUICK_CHECK_DATA, qrRspData);
+        	SherlockFragment targetFragment = QuickCheckViewerFragment.newInstance(origData);
         	
         	getSupportFragmentManager().beginTransaction()
             .add(R.id.quick_check_compose_activity_container, targetFragment).commit();
         }
         
 	  }
-    
-    private QuickCheckRspData convertQuickCheckListItemData2RspData(QuickCheckListItemData itemData){
-    	QuickCheckRspData data = new QuickCheckRspData();
-		data.setId(itemData.getId());
-		data.setSubmitterId(itemData.getSubmitterId());
-		data.setSubmitterName(itemData.getSubmitterName());
-		data.setResponsiblePeronId(itemData.getResponsiblePeronId());
-		data.setResponsiblePersonName(itemData.getResponsiblePersonName());
-		data.setOrganizationId(itemData.getOrganizationId());
-		data.setOrganizationName(itemData.getOrganizationName());
-		data.setDeadline(itemData.getDeadline());
-		data.setState(itemData.getState());
-		data.setLevel(itemData.getLevel());
-		data.setDescription(itemData.getDescription());
-		data.setImages(itemData.getImages());
-    	return data;
-    }
 
 
 	@Override
@@ -87,7 +83,7 @@ public class QuickCheckComposeActivity extends SherlockFragmentActivity implemen
 
 
 	@Override
-	public void onQuickCheckSubmitSuccess(QuickCheckRspData qcRspData) {
+	public void onQuickCheckSubmitSuccess(Bundle qcRspData) {
 		QuickCheckViewerFragment newFragment = QuickCheckViewerFragment.newInstance(qcRspData);
 
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -99,13 +95,13 @@ public class QuickCheckComposeActivity extends SherlockFragmentActivity implemen
 	}
 
 	@Override
-	public void onQuickCheckEditMenuItemClicked(QuickCheckRspData qcRspData) {
-		QuickCheckEditorFragment newFragment = QuickCheckEditorFragment.newInstance(qcRspData);
+	public void onQuickCheckEditMenuItemClicked(Bundle qrOrigData) {
+		QuickCheckEditorFragment newFragment = QuickCheckEditorFragment.newInstance(qrOrigData);
 
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
 		transaction.replace(R.id.quick_check_compose_activity_container, newFragment);
-//		transaction.addToBackStack(null);
+		transaction.addToBackStack(null);
 
 		transaction.commit();	
 	}
@@ -156,4 +152,18 @@ public class QuickCheckComposeActivity extends SherlockFragmentActivity implemen
 
 		transaction.commit();
 	}
+
+
+	@Override
+	public void onQuickReportResolveListItemClicked(Bundle qrRslvDataBundle) {
+		QuickReportResolutionViewerFragment newFragment = QuickReportResolutionViewerFragment.newInstance(qrRslvDataBundle);
+
+		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+		transaction.replace(R.id.quick_check_compose_activity_container, newFragment);
+		transaction.addToBackStack(null);
+
+		transaction.commit();
 	}
+	
+}

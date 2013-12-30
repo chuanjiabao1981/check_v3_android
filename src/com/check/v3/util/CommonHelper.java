@@ -1,6 +1,10 @@
 package com.check.v3.util;
 
 import java.util.Collection;
+
+import com.check.v3.data.QuickCheckListItemData;
+import com.check.v3.data.QuickCheckRspData;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -76,6 +80,23 @@ public final class CommonHelper {
         } else {
             activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         }
+    }
+    
+    public static QuickCheckRspData convertQuickCheckListItemData2RspData(QuickCheckListItemData itemData){
+    	QuickCheckRspData data = new QuickCheckRspData();
+		data.setId(itemData.getId());
+		data.setSubmitterId(itemData.getSubmitterId());
+		data.setSubmitterName(itemData.getSubmitterName());
+		data.setResponsiblePeronId(itemData.getResponsiblePeronId());
+		data.setResponsiblePersonName(itemData.getResponsiblePersonName());
+		data.setOrganizationId(itemData.getOrganizationId());
+		data.setOrganizationName(itemData.getOrganizationName());
+		data.setDeadline(itemData.getDeadline());
+		data.setState(itemData.getState());
+		data.setLevel(itemData.getLevel());
+		data.setDescription(itemData.getDescription());
+		data.setImages(itemData.getImages());
+    	return data;
     }
 
 }

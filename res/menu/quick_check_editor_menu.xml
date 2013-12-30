@@ -11,10 +11,5 @@
         android:icon="@drawable/ic_menu_discard"
         android:showAsAction="ifRoom|withText"
         android:title="舍弃"/>
-    <item
-        android:id="@+id/qc_edit_action_process"
-        android:icon="@drawable/ic_compose"
-        android:showAsAction="never"
-        android:title="处理"/>
 
 </menu>

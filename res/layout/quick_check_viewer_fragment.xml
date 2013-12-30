@@ -230,7 +230,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dip"
                 android:orientation="vertical"
-                android:padding="5dip" >
+                android:padding="5dip" 
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/qc_v_issue_resolve_title"
