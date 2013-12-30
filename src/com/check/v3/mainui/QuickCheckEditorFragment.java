@@ -1,33 +1,17 @@
 package com.check.v3.mainui;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-
 import org.apache.http.Header;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.OpenableColumns;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
+import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,9 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -60,7 +42,6 @@ import com.check.v3.data.PhotoInfoData;
 import com.check.v3.data.QuickCheckReqData;
 import com.check.v3.data.FilePartData;
 import com.check.v3.data.QuickCheckRspData;
-import com.check.v3.data.ReportResolutionRspData;
 import com.check.v3.data.SimpleOrganization;
 import com.check.v3.data.User;
 import com.check.v3.mainui.ConfirmationDialogFragment.ConfirmationDialogFragmentListener;
@@ -69,7 +50,7 @@ import com.check.v3.mainui.ListItemDialogFragment.ListItemDialogFragmentListener
 import com.check.v3.mainui.ProgressDialogFragment.ProgressDialogFragmentListener;
 import com.check.v3.util.CommonHelper;
 import com.check.v3.util.FileHelper;
-import com.check.v3.util.UriUtils;
+import com.check.v3.util.FragmentDialogUtil;
 import com.check.v3.widget.CustomGridView;
 import com.google.gson.Gson;
 
@@ -95,6 +76,7 @@ public class QuickCheckEditorFragment extends SherlockFragment implements
 
 	private EditText mDeadlineEditText, mIssueDescriptionEditText;
 
+	private Button mInsertPhotBbtn;
 	private Spinner mComposeIssueLevelSpinn, mComposeOrgSpinn,
 			mComposeRspPersonSpinn;
 	ArrayAdapter<String> mIssueServSpinnAdapter, mOrgAdapter, mPersonAdapter;
@@ -114,10 +96,9 @@ public class QuickCheckEditorFragment extends SherlockFragment implements
 	private String mIssueDescriptionStr = "";
 
 	private QuickCheckReqData mQuickCheckReqData;
-	Gson gson;
+	private Gson gson;
 
 	private static final int NORMAL_BITMAP_SIZE = 512;
-	private static final int MAX_BITMAP_SIZE = 512;
 
 	private File mImageFile;
 	private Uri mImageUri;
@@ -125,9 +106,11 @@ public class QuickCheckEditorFragment extends SherlockFragment implements
 	ArrayList<Integer> mImageNeedToDeletedList;
 	ArrayList<ImageItemData> mOrigImageList;
 	ArrayList<PhotoInfoData> mPhotoListToAdd;
-	ArrayList<Integer> fileListToDelete;
+	ArrayList<Integer> mFileListToDelete;
 
 	QuickCheckRspData qcData = null;
+	
+	private Fragment mFragCtx;
 
 	public static QuickCheckEditorFragment newInstance(Bundle reference) {
 		QuickCheckEditorFragment fragment = new QuickCheckEditorFragment();
@@ -143,6 +126,8 @@ public class QuickCheckEditorFragment extends SherlockFragment implements
 		setHasOptionsMenu(true);
 
 		gson = new Gson();
+		
+		mFragCtx = this;
 	}
 
 	@Override
@@ -200,7 +185,7 @@ public class QuickCheckEditorFragment extends SherlockFragment implements
 				R.id.issue_rsp_org_spinner);
 		mComposeRspPersonSpinn = (Spinner) getView().findViewById(
 				R.id.issue_rsp_person_spinner);
-		Button btn = (Button) getView().findViewById(R.id.btn);
+		mInsertPhotBbtn = (Button) getView().findViewById(R.id.btn);
 
 		mDeadlineEditText = (EditText) getView().findViewById(
 				R.id.issue_dealine_picker);
@@ -246,19 +231,19 @@ public class QuickCheckEditorFragment extends SherlockFragment implements
 
 		mDeadlineEditText.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				showDialog(R.id.dialog_date_picker);
+				FragmentDialogUtil.showDialog(mFragCtx, R.id.dialog_date_picker);
 			}
 		});
 		mDeadlineEditText.setInputType(InputType.TYPE_NULL);
 
-		btn.setOnClickListener(this);
+		mInsertPhotBbtn.setOnClickListener(this);
 
 		mPhotoListToAdd = new ArrayList<PhotoInfoData>();
-		fileListToDelete = new ArrayList<Integer>();
+		mFileListToDelete = new ArrayList<Integer>();
 		
 		mInsertPhotoGridViewSimpleAdapter = new InsertPhotoGridViewSimpleAdapter(getActivity(),
 				mPhotoListToAdd);
-		mInsertPhotoGridViewSimpleAdapter.setDeleteHandler(mAddPhotoDeleteHandler);
+		mInsertPhotoGridViewSimpleAdapter.setDeleteHandler(mInsertPhotoDeleteHandler);
 
 		mInsertPhotoGridView.setAdapter(mInsertPhotoGridViewSimpleAdapter);
 		mInsertPhotoGridView.setOnItemClickListener(this);
@@ -418,7 +403,7 @@ public class QuickCheckEditorFragment extends SherlockFragment implements
 
 	};
 
-	private InsertPhotoGridViewSimpleAdapter.AttachmentDeleteHandler mAddPhotoDeleteHandler = new InsertPhotoGridViewSimpleAdapter.AttachmentDeleteHandler() {
+	private InsertPhotoGridViewSimpleAdapter.AttachmentDeleteHandler mInsertPhotoDeleteHandler = new InsertPhotoGridViewSimpleAdapter.AttachmentDeleteHandler() {
 		@Override
 		public void doDeleteAttachment(int position) {
 			mPhotoListToAdd.remove(position);
@@ -491,13 +476,13 @@ public class QuickCheckEditorFragment extends SherlockFragment implements
 
 			@Override
 			public void onStart() {
-				showDialog(R.id.dialog_show_progress);
+				FragmentDialogUtil.showDialog(mFragCtx, R.id.dialog_show_progress);
 			}
 
 			@Override
 			public void onSuccess(int statusCode, Header[] headers,
 					byte[] response) {
-				removeDialog(R.id.dialog_show_progress);
+				FragmentDialogUtil.removeDialog(mFragCtx, R.id.dialog_show_progress);
 
 				String rspStr = new String(response);
 				Log.d(TAG,
@@ -517,7 +502,7 @@ public class QuickCheckEditorFragment extends SherlockFragment implements
 			@Override
 			public void onFailure(int statusCode, Header[] headers,
 					byte[] errorResponse, Throwable e) {
-				removeDialog(R.id.dialog_show_progress);
+				FragmentDialogUtil.removeDialog(mFragCtx, R.id.dialog_show_progress);
 
 				String errorStr = AsyncHttpExeptionHelper.getMessage(
 						getActivity(), e, errorResponse, statusCode);
@@ -543,76 +528,7 @@ public class QuickCheckEditorFragment extends SherlockFragment implements
 
 	@Override
 	public void onClick(View v) {
-		showDialog(R.id.dialog_choose_photo_list_item);
-	}
-
-	private void showDialog(int dialogId) {
-		DialogFragment fragment;
-		switch (dialogId) {
-		case R.id.dialog_confirm_delete: {
-			String title = "delete?";
-			String message = "Are you sure to delete?";
-			String confirmText = "Ok";
-			String cancelText = "Cancel";
-
-			fragment = ConfirmationDialogFragment.newInstance(dialogId, title,
-					message, confirmText, cancelText);
-			break;
-		}
-		case R.id.dialog_choose_photo_list_item: {
-			String title = "添加图片";
-			String cancelText = "取消";
-			String[] items = { "选取图片", "现场拍照" };
-
-			fragment = ListItemDialogFragment.newInstance(dialogId, title,
-					items, cancelText);
-			break;
-		}
-		case R.id.dialog_date_picker: {
-			fragment = DatePickerDialogFragment.newInstance(dialogId, "选择日期",
-					"");
-			break;
-		}
-		case R.id.dialog_show_progress: {
-			String message = "网络通信中, 请稍等...";
-			fragment = ProgressDialogFragment
-					.newInstance(dialogId, "", message);
-			break;
-		}
-		default: {
-			throw new RuntimeException(
-					"Called showDialog(int) with unknown dialog id.");
-		}
-		}
-
-		fragment.setTargetFragment(this, dialogId);
-		fragment.show(getFragmentManager(), getDialogTag(dialogId));
-	}
-
-	private void removeDialog(int dialogId) {
-		FragmentManager fm = getFragmentManager();
-
-		if (fm == null || isRemoving() || isDetached()) {
-			return;
-		}
-
-		// Make sure the "show dialog" transaction has been processed when we
-		// call
-		// findFragmentByTag() below. Otherwise the fragment won't be found and
-		// the dialog will
-		// never be dismissed.
-		fm.executePendingTransactions();
-
-		DialogFragment fragment = (DialogFragment) fm
-				.findFragmentByTag(getDialogTag(dialogId));
-
-		if (fragment != null) {
-			fragment.dismiss();
-		}
-	}
-
-	private String getDialogTag(int dialogId) {
-		return String.format("dialog-%d", dialogId);
+		FragmentDialogUtil.showDialog(this, R.id.dialog_choose_photo_list_item);
 	}
 
 	@Override
@@ -623,24 +539,19 @@ public class QuickCheckEditorFragment extends SherlockFragment implements
 				&& resultCode == Activity.RESULT_OK) {
 			mImageUri = data.getData();
 
-			PhotoInfoData photoInfoData = getPhotoFromUri(mContext, mImageUri, NORMAL_BITMAP_SIZE);
+			PhotoInfoData photoInfoData = CommonHelper.getPhotoFromUri(mContext, mImageUri, NORMAL_BITMAP_SIZE);
 
 			mPhotoListToAdd.add(photoInfoData);
 			mInsertPhotoGridViewSimpleAdapter.notifyDataSetChanged();
 		} else {
 			if (requestCode == REQUEST_IMAGE_CAPTURE
 					&& resultCode == Activity.RESULT_OK) {
-				PhotoInfoData photoInfoData = getPhotoFromUri(mContext, mImageUri, NORMAL_BITMAP_SIZE);
+				PhotoInfoData photoInfoData = CommonHelper.getPhotoFromUri(mContext, mImageUri, NORMAL_BITMAP_SIZE);
 				mPhotoListToAdd.add(photoInfoData);
 				mInsertPhotoGridViewSimpleAdapter.notifyDataSetChanged();
 			}
 		}
 
-	}
-
-	private String getPhotoFilename(Date date) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddKms");
-		return dateFormat.format(date) + ".jpg";
 	}
 
 	protected void onOpenPhotoLibrary() {
@@ -652,7 +563,7 @@ public class QuickCheckEditorFragment extends SherlockFragment implements
 	protected void onOpenImageCapture() {
 		try {
 			// TODO: API < 1.6, images size too small
-			String filename = getPhotoFilename(new Date());
+			String filename = CommonHelper.getPhotoFilename(new Date());
 			Log.d(TAG, "Photo filename=" + filename);
 			mImageFile = new File(FileHelper.getBasePath(), filename);
 			mImageUri = Uri.fromFile(mImageFile);
@@ -662,94 +573,6 @@ public class QuickCheckEditorFragment extends SherlockFragment implements
 		} catch (Exception e) {
 			Log.e(TAG, e.getMessage());
 		}
-	}
-	
-	private PhotoInfoData getPhotoFromUri(Context context, Uri uri, int size) {
-		InputStream input = null;
-		Bitmap bitmap = null;
-		PhotoInfoData photoInfoData = null;
-
-		if(size > MAX_BITMAP_SIZE){
-			size = MAX_BITMAP_SIZE;
-		}
-		
-		try {
-			input = context.getContentResolver().openInputStream(uri);
-			BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inJustDecodeBounds = true;
-			BitmapFactory.decodeStream(input, null, options);
-			input.close();
-
-			// Compute the scale.
-			int scale = 1;
-			while ((options.outWidth / scale > size)
-					|| (options.outHeight / scale > size)) {
-				scale *= 2;
-			}
-
-			options.inJustDecodeBounds = false;
-			options.inSampleSize = scale;
-
-			input = context.getContentResolver().openInputStream(uri);
-
-			bitmap = BitmapFactory.decodeStream(input, null, options);
-			String filename = getPhotoFilename(new Date());
-			
-			photoInfoData = saveBitmapToStorage(uri, bitmap, filename);
-		} catch (IOException e) {
-			Log.w("", e);
-		} finally {
-			if (input != null) {
-				try {
-					input.close();
-				} catch (IOException e) {
-					Log.w("", e);
-				}
-			}
-		}
-		return photoInfoData;
-	}
-
-	public PhotoInfoData saveBitmapToStorage(Uri uri, Bitmap bm, String fileName) {
-		
-		PhotoInfoData photoInfoData = null;
-		File sdPath = Environment.getExternalStorageDirectory();
-		
-		File fPath = new File(sdPath, "cloudCheck/");
-		if (!fPath.canWrite()) {
-			boolean res = fPath.mkdirs();
-			Log.d(TAG, "Create dir result: " + res);
-		} else {
-			Log.d(TAG, "Can't create dir!");
-		}
-		File photoFile = new File(fPath, fileName);
-
-		if (photoFile.exists()) {
-			photoFile.delete();
-		}
-		
-		try {
-			FileOutputStream out = new FileOutputStream(photoFile);
-			bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
-			out.flush();
-			out.close();
-			Log.i(TAG, "已经保存");
-
-			if (photoFile != null) {
-				Log.i(TAG, "add file item: " + photoFile.getName() + ", size = "
-						+ photoFile.length());
-				Log.i(TAG, "add file item: " + photoFile.getAbsolutePath());
-				photoInfoData = new PhotoInfoData(uri, photoFile, bm);
-			}
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return photoInfoData;
-
 	}
 
 	@Override

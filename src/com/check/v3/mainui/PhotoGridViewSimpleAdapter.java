@@ -8,8 +8,6 @@ import com.android.volley.toolbox.ImageLoader.ImageListener;
 import com.check.client.R;
 import com.check.v3.CloudCheckApplication;
 import com.check.v3.data.ImageItemData;
-import com.check.v3.mainui.AttachmentSimpleAdapter.AttachmentDeleteHandler;
-import com.check.v3.mainui.AttachmentSimpleAdapter.AttachmentRemoveOnClickListener;
 import com.check.v3.util.LruBitmapCache;
 
 import android.app.AlertDialog;
