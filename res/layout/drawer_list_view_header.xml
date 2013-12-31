@@ -17,14 +17,14 @@
             android:layout_height="54dp"
             android:layout_gravity="center_vertical"
             android:paddingLeft="10dip"
-            android:src="@drawable/slicey_large" />
+            android:src="@drawable/avatar" />
 
         <TextView
             android:id="@+id/user_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:paddingLeft="20dip"
+            android:paddingLeft="10dip"
             android:text="账户名未设置"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="#ffffff" />

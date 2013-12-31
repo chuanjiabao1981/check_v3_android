@@ -255,7 +255,7 @@ public class CloudCheckApplication extends Application {
 	        HttpConnectionParams.setSocketBufferSize(httpParams, 8192);
 
 	        HttpProtocolParams.setVersion(httpParams, HttpVersion.HTTP_1_1);
-	        HttpProtocolParams.setUserAgent(httpParams, String.format("android-async-http/%s (http://loopj.com/android-async-http)", "1.4.5"));
+	        HttpProtocolParams.setUserAgent(httpParams, String.format("android-async-http/%s", "1.4.5"));
 
 	        ThreadSafeClientConnManager cm = new ThreadSafeClientConnManager(httpParams, getDefaultSchemeRegistry(false, 80, 443));
 		      		
