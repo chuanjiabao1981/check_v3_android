@@ -19,21 +19,21 @@
         android:allowBackup="true">"
 		<activity 
 		    android:theme="@android:style/Theme.NoTitleBar" 
-		    android:name="com.check.v3.login.WelcomeActivity">
+		    android:name="com.check.v3.ui.login.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:theme="@android:style/Theme.NoTitleBar" android:name="com.check.v3.login.LoginActivity" android:screenOrientation="portrait" />
-        <activity android:name="com.check.v3.mainui.MainActivity" android:configChanges="mcc|mnc|keyboard|keyboardHidden|orientation|screenSize" />
+        <activity android:theme="@android:style/Theme.NoTitleBar" android:name="com.check.v3.ui.login.LoginActivity" android:screenOrientation="portrait" />
+        <activity android:name="com.check.v3.ui.main.MainActivity" android:configChanges="mcc|mnc|keyboard|keyboardHidden|orientation|screenSize" />
         <activity android:name="com.check.v3.register.RegisterActivity" />
         <activity android:name="com.check.v3.register.RegisterConfirmActivity" />
-        <activity android:name="com.check.v3.mainui.QuickCheckComposeActivity_old" android:windowSoftInputMode="stateHidden" 
+        <activity android:name="com.check.v3.ui.dialog.QuickCheckComposeActivity_old" android:windowSoftInputMode="stateHidden" 
             android:configChanges="mcc|mnc|keyboard|keyboardHidden|orientation|screenSize"> </activity>
-        <activity android:name="com.check.v3.mainui.QuickCheckComposeActivity" android:windowSoftInputMode="stateHidden" 
+        <activity android:name="com.check.v3.ui.quickreport.QuickCheckComposeActivity" android:windowSoftInputMode="stateHidden" 
             android:configChanges="mcc|mnc|keyboard|keyboardHidden|orientation|screenSize"> </activity>
-        <activity android:name="com.check.v3.mainui.SubActivity" />
+        <activity android:name="com.check.v3.ui.main.SubActivityy" />
     </application>
 </manifest>
 

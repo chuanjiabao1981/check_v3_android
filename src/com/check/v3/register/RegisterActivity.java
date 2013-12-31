@@ -1,7 +1,7 @@
 package com.check.v3.register;
 
 import com.check.client.R;
-import com.check.v3.util.ClassPathResource;
+import com.check.v3.utils.ClassPathResource;
 
 import android.app.Activity;
 import android.app.AlertDialog;
