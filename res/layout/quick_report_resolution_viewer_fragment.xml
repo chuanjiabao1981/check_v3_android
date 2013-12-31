@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:id="@+id/quick_report_resolution_viewer_fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
@@ -15,62 +16,63 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
+            <TextView
+                android:id="@+id/qr_v_issue_resolution_detail_title"
+                style="@style/custom_qc_viewer_item_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:padding="5dip"
+                android:text="解决方案详情"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#000000" />
+
             <LinearLayout
-                android:id="@+id/qr_v_issue_resolution_dscp_container"
+                android:id="@+id/qr_v_issue_resolution_detail_container"
                 style="@style/custom_qc_viewer_item_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="5dip" >
+                android:orientation="vertical" >
 
-                <TextView
-                    android:id="@+id/qr_v_issue_resolution_dscp_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="解决方案描述:"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="#000000" />
-
-                <TextView
-                    android:id="@+id/qr_v_issue_resolution_dscp_text"
+                <com.check.v3.widget.CustomIssueItemView
+                    android:id="@+id/qr_v_issue_resolution_dscp_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:paddingLeft="5dip"
-                    android:text=""
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="#000000" />
-            </LinearLayout>
-            
-            <LinearLayout
-                android:id="@+id/qr_v_issue_resolution_photo_container"
-                style="@style/custom_qc_viewer_item_style"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dip"
-                android:orientation="vertical"
-                android:padding="5dip" 
-                android:visibility="gone" >
+                    android:layout_marginTop="5dip"
+                    android:padding="5dip"
+                    custom:customTitleText="方案描述: "
+                    custom:customValueText="" >
+                </com.check.v3.widget.CustomIssueItemView>
 
-                <TextView
-                    android:id="@+id/qr_v_issue_resolution_photo_title"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:id="@+id/qr_v_issue_resolution_photo_container"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="解决方案图片"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="#000000" />
-                
-                <com.check.v3.widget.CustomGridView
-			        android:id="@+id/qr_v_issue_resolution_photo_grid_view"
-			        android:layout_width="match_parent"
-			        android:layout_height="match_parent"
-			        android:cacheColorHint="@android:color/transparent"
-			        android:fadingEdgeLength="0dp" />
+                    android:layout_marginTop="10dip"
+                    android:orientation="vertical"
+                    android:padding="5dip"
+                    android:visibility="gone" >
 
-         </LinearLayout>
-        </LinearLayout>              
+                    <TextView
+                        android:id="@+id/qr_v_issue_resolution_photo_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="方案图片展示: "
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#c1c1c1" />
+
+                    <com.check.v3.widget.CustomGridView
+                        android:id="@+id/qr_v_issue_resolution_photo_grid_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="10dip"
+                        android:layout_marginTop="10dip"
+                        android:cacheColorHint="@android:color/transparent"
+                        android:fadingEdgeLength="0dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
     </ScrollView>
 
 </FrameLayout>

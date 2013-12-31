@@ -15,12 +15,14 @@ import com.check.client.R;
 import com.check.v3.api.ApiConstant;
 import com.check.v3.data.ReportResolutionRspData;
 import com.check.v3.widget.CustomGridView;
+import com.check.v3.widget.CustomIssueItemView;
 
 public class QuickReportResolutionViewerFragment extends SherlockFragment {
 	private static final String TAG = "QuickReportResolutionViewerFragment";
 
 	private int mViewMode = ApiConstant.ACTION_MODE_VIEW_RSLV_FROM_LIST;
 	
+	private CustomIssueItemView mCustomIssueRslvRspDscpView;
 	private TextView mIssueRlsvDscpTextView;
 	private LinearLayout mIssueRslvPhotoViewerContainer;
 	private CustomGridView mIssueRslvPhotoViewerGridView;
@@ -69,8 +71,9 @@ public class QuickReportResolutionViewerFragment extends SherlockFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-               
-		mIssueRlsvDscpTextView = (TextView) getView().findViewById(R.id.qr_v_issue_resolution_dscp_text);
+        
+        mCustomIssueRslvRspDscpView = (CustomIssueItemView) getView().findViewById(R.id.qr_v_issue_resolution_dscp_container);
+		mIssueRlsvDscpTextView = (TextView) mCustomIssueRslvRspDscpView.findViewById(R.id.issue_item_value_text);
 		mIssueRslvPhotoViewerContainer = (LinearLayout) getView().findViewById(R.id.qr_v_issue_resolution_photo_container);
 		mIssueRslvPhotoViewerGridView = (CustomGridView) getView().findViewById(R.id.qr_v_issue_resolution_photo_grid_view);
 		

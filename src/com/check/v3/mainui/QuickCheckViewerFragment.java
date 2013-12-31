@@ -31,19 +31,29 @@ import com.check.v3.data.QuickCheckRspData;
 import com.check.v3.data.ReportResolutionRspData;
 import com.check.v3.util.CommonHelper;
 import com.check.v3.widget.CustomGridView;
+import com.check.v3.widget.CustomIssueItemView;
 import com.check.v3.widget.CustomListView;
 import com.google.gson.Gson;
 
 public class QuickCheckViewerFragment extends SherlockFragment {
 	private static final String TAG = "QuickCheckViewerFragment";
 
+	private CustomIssueItemView mCustomIssueDscpView;
 	private TextView mIssueDscpTextView;
+	private CustomIssueItemView mCustomIssueStateView;
 	private TextView mIssueStateTextView;
+	private CustomIssueItemView mCustomIssueLevelView;
 	private TextView mIssueLevelTextView;
+	private CustomIssueItemView mCustomIssueSubmitterNameView;
 	private TextView mIssueSubmitterNameTextView;
+	private CustomIssueItemView mCustomIssueDeadlineView;
 	private TextView mIssueDeadlineTextView;
+	private CustomIssueItemView mCustomIssueRspOrgView;
 	private TextView mIssueRspOrgTextView;
+	private CustomIssueItemView mCustomIssueRspPersonView;
 	private TextView mIssueRspPersonTextView;
+	
+	private LinearLayout mIssuePhotoViewerContainer;
 	private CustomGridView mIssuePhotoViewerGridView;
 	private PhotoGridViewSimpleAdapter mPhotoGridViewSimpleAdapter;
 
@@ -102,25 +112,48 @@ public class QuickCheckViewerFragment extends SherlockFragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		mIssueDscpTextView = (TextView) getView().findViewById(
-				R.id.qc_v_issue_dscp_text);
-		mIssueStateTextView = (TextView) getView().findViewById(
-				R.id.qc_v_issue_state_text);
-		mIssueLevelTextView = (TextView) getView().findViewById(
-				R.id.qc_v_issue_level_text);
+		mCustomIssueDscpView = (CustomIssueItemView) getView().findViewById(
+				R.id.qr_v_issue_dscp_container);
+		mIssueDscpTextView = (TextView) mCustomIssueDscpView.findViewById(
+				R.id.issue_item_value_text);
+				
+		mCustomIssueStateView = (CustomIssueItemView) getView().findViewById(
+				R.id.qr_v_issue_state_container);
+		mIssueStateTextView = (TextView) mCustomIssueStateView.findViewById(
+				R.id.issue_item_value_text);
+		
+		mCustomIssueLevelView = (CustomIssueItemView) getView().findViewById(
+				R.id.qr_v_issue_level_container);
+		mIssueLevelTextView = (TextView) mCustomIssueLevelView.findViewById(
+				R.id.issue_item_value_text);
+		
+		mCustomIssueSubmitterNameView = (CustomIssueItemView) getView().findViewById(
+				R.id.qr_v_issue_submitter_container);
 		mIssueSubmitterNameTextView = (TextView) getView().findViewById(
-				R.id.qc_v_issue_submitter_text);
-		mIssueDeadlineTextView = (TextView) getView().findViewById(
-				R.id.qc_v_issue_deadline_text);
-		mIssueRspOrgTextView = (TextView) getView().findViewById(
-				R.id.qc_v_issue_rsp_org_text);
-		mIssueRspPersonTextView = (TextView) getView().findViewById(
-				R.id.qc_v_issue_rsp_person_text);
+				R.id.issue_item_value_text);
+		
+		mCustomIssueDeadlineView = (CustomIssueItemView) getView().findViewById(
+				R.id.qr_v_issue_deadline_container);
+		mIssueDeadlineTextView = (TextView) mCustomIssueDeadlineView.findViewById(
+				R.id.issue_item_value_text);
+		
+		mCustomIssueRspOrgView = (CustomIssueItemView) getView().findViewById(
+				R.id.qr_v_issue_rsp_org_container);
+		mIssueRspOrgTextView = (TextView) mCustomIssueRspOrgView.findViewById(
+				R.id.issue_item_value_text);
+		
+		mCustomIssueRspPersonView = (CustomIssueItemView) getView().findViewById(
+				R.id.qr_v_issue_rsp_person_container);
+		mIssueRspPersonTextView = (TextView) mCustomIssueRspPersonView.findViewById(
+				R.id.issue_item_value_text);
+		
+		mIssuePhotoViewerContainer = (LinearLayout) getView().findViewById(
+				R.id.qr_v_issue_photo_list_container);
 		mIssuePhotoViewerGridView = (CustomGridView) getView().findViewById(
-				R.id.qc_v_issue_photo_grid_view);
+				R.id.qr_v_issue_photo_grid_view);
 
 		mIssueResolutionListContainer = (LinearLayout) getView().findViewById(
-				R.id.qc_v_issue_resolve_container);
+				R.id.qr_v_issue_resolve_container);
 		mIssueResolutionListView = (CustomListView) getView().findViewById(
 				R.id.quick_report_resolve_list_view);
 
@@ -160,9 +193,12 @@ public class QuickCheckViewerFragment extends SherlockFragment {
 		mIssueRspPersonTextView.setText(data.getResponsiblePersonName());
 
 		if (data.getImages() != null && data.getImages().size() > 0) {
+			mIssuePhotoViewerContainer.setVisibility(View.VISIBLE);
 			mPhotoGridViewSimpleAdapter = new PhotoGridViewSimpleAdapter(
 					getActivity(), data.getImages(), false);
 			mIssuePhotoViewerGridView.setAdapter(mPhotoGridViewSimpleAdapter);
+		}else{
+			mIssuePhotoViewerContainer.setVisibility(View.GONE);
 		}
 
 	}

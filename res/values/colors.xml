@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="white">#ffffff</color>
+    <color name="blacl">#000000</color>
     <color name="custom_circle_prg_bar_pri_color_light">#f032b3e1</color>
     <color name="custom_circle_prg_bar_sec_color_light">#50c0eaf8</color>
     <color name="color_white">#ffffffff</color>
