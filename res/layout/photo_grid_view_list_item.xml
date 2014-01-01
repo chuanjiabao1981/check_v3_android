@@ -8,13 +8,14 @@
         android:id="@+id/preview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
+        android:layout_gravity="center"
          />
     
     <Button
         android:id="@+id/delete_preview_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:text="删除" />
 
 </LinearLayout>

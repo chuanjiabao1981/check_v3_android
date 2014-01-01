@@ -131,7 +131,7 @@ public class QuickCheckViewerFragment extends SherlockFragment {
 		
 		mCustomIssueSubmitterNameView = (CustomIssueItemView) getView().findViewById(
 				R.id.qr_v_issue_submitter_container);
-		mIssueSubmitterNameTextView = (TextView) getView().findViewById(
+		mIssueSubmitterNameTextView = (TextView) mCustomIssueSubmitterNameView.findViewById(
 				R.id.issue_item_value_text);
 		
 		mCustomIssueDeadlineView = (CustomIssueItemView) getView().findViewById(
