@@ -4,6 +4,7 @@ import org.apache.http.Header;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -31,13 +32,15 @@ import com.check.v3.data.QuickCheckRspData;
 import com.check.v3.data.ReportResolutionRspData;
 import com.check.v3.ui.adapter.IssueResolutionListAdapter;
 import com.check.v3.ui.adapter.PhotoGridViewSimpleAdapter;
+import com.check.v3.ui.dialog.ProgressDialogFragment.ProgressDialogFragmentListener;
 import com.check.v3.utils.CommonHelper;
+import com.check.v3.utils.FragmentDialogUtil;
 import com.check.v3.widget.CustomGridView;
 import com.check.v3.widget.CustomIssueItemView;
 import com.check.v3.widget.CustomListView;
 import com.google.gson.Gson;
 
-public class QuickCheckViewerFragment extends SherlockFragment {
+public class QuickCheckViewerFragment extends SherlockFragment implements ProgressDialogFragmentListener {
 	private static final String TAG = "QuickCheckViewerFragment";
 
 	private CustomIssueItemView mCustomIssueDscpView;
@@ -70,6 +73,8 @@ public class QuickCheckViewerFragment extends SherlockFragment {
 	private Gson gson;
 	private QuickCheckViewerFragmentListener mQuickCheckViewerFragmentListener;
 	
+	private Fragment mFragCtx;
+	
 	private static final int CTX_MENU_EDIT_ITEM = Menu.FIRST;
 	private static final int CTX_MENU_DELETE_ITEM = Menu.FIRST + 1;
 
@@ -87,6 +92,7 @@ public class QuickCheckViewerFragment extends SherlockFragment {
 		setHasOptionsMenu(true);
 
 		gson = new Gson();
+		mFragCtx = this;
 	}
 
 	@Override
@@ -264,7 +270,7 @@ public class QuickCheckViewerFragment extends SherlockFragment {
 
 			@Override
 			public void onStart() {
-
+				FragmentDialogUtil.showDialog(mFragCtx, R.id.dialog_show_progress);
 			}
 
 			@Override
@@ -281,12 +287,14 @@ public class QuickCheckViewerFragment extends SherlockFragment {
 								.getQuickReport());
 				initView(qcData);
 				initViewExt(detailedData);
+				
+				FragmentDialogUtil.removeDialog(mFragCtx, R.id.dialog_show_progress);
 			}
 
 			@Override
 			public void onFailure(int statusCode, Header[] headers,
 					byte[] errorResponse, Throwable e) {
-
+				FragmentDialogUtil.removeDialog(mFragCtx, R.id.dialog_show_progress);
 				String errStr = new String(errorResponse);
 
 				String errorStr = AsyncHttpExeptionHelper.getMessage(
@@ -369,6 +377,12 @@ public class QuickCheckViewerFragment extends SherlockFragment {
 			mQuickCheckViewerFragmentListener
 					.onQuickReportResolveListItemClicked(origData);
 		}
+	}
+
+	@Override
+	public void dialogCancelled(int dialogId) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
