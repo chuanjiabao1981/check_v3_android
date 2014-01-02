@@ -34,7 +34,7 @@ public class DatePickerDialogFragment extends SherlockDialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Bundle args = getArguments();
-        String title = "Choose a date";
+        String title = "解决期限";
         
         Calendar cd = Calendar.getInstance();
         Date date = new Date();
@@ -47,9 +47,7 @@ public class DatePickerDialogFragment extends SherlockDialogFragment {
 	DatePickerDialog.OnDateSetListener onDateSetListener = new DatePickerDialog.OnDateSetListener() {
 		public void onDateSet(DatePicker view, int year, int monthOfYear,
 				int dayOfMonth) {
-			Log.d("test in frag", "" + year + "年" + (monthOfYear + 1) + "月"
-					+ dayOfMonth + "日");
-			getListener().datePickerDialogOnDateSet(getDialogId(), year + "-" + monthOfYear + "-"
+			getListener().datePickerDialogOnDateSet(getDialogId(), year + "-" + (monthOfYear + 1) + "-"
 					+ dayOfMonth);
 		}
 	}; 

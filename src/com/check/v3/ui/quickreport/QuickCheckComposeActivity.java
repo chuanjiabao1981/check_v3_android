@@ -15,6 +15,7 @@ import com.check.v3.utils.CommonHelper;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 
@@ -86,11 +87,15 @@ public class QuickCheckComposeActivity extends SherlockFragmentActivity implemen
 	public void onQuickCheckSubmitSuccess(Bundle qcRspData) {
 		QuickCheckViewerFragment newFragment = QuickCheckViewerFragment.newInstance(qcRspData);
 
+//		FragmentManager fragMngr = getSupportFragmentManager();
+//
+//		fragMngr.popBackStack();
+		
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
 		transaction.replace(R.id.quick_check_compose_activity_container, newFragment);
 //		transaction.addToBackStack(null);
-
+		
 		transaction.commit();		
 	}
 
@@ -101,7 +106,7 @@ public class QuickCheckComposeActivity extends SherlockFragmentActivity implemen
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
 		transaction.replace(R.id.quick_check_compose_activity_container, newFragment);
-		transaction.addToBackStack(null);
+//		transaction.addToBackStack("viewer-frag");
 
 		transaction.commit();	
 	}
@@ -148,7 +153,7 @@ public class QuickCheckComposeActivity extends SherlockFragmentActivity implemen
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
 		transaction.replace(R.id.quick_check_compose_activity_container, newFragment);
-		transaction.addToBackStack(null);
+//		transaction.addToBackStack(null);
 
 		transaction.commit();
 	}
